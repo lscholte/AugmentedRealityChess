@@ -1,7 +1,7 @@
-.vs
-bin
-obj
-Properties
+\.vs
+\build
+\obj
+\bin
 
 *.vcxproj.user
 *.csproj.user
