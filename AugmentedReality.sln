@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32112.339
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AugmentedReality", "AugmentedReality\AugmentedReality.vcxproj", "{3BA495D3-28B1-4292-96C8-EE5F413407F2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommunicationLayer", "CommunicationLayer\CommunicationLayer.vcxproj", "{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gui", "Gui\Gui.csproj", "{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Debug|Any CPU.Build.0 = Debug|x64
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Debug|x64.ActiveCfg = Debug|x64
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Debug|x64.Build.0 = Debug|x64
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Debug|x86.ActiveCfg = Debug|Win32
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Debug|x86.Build.0 = Debug|Win32
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Release|Any CPU.ActiveCfg = Release|x64
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Release|Any CPU.Build.0 = Release|x64
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Release|x64.ActiveCfg = Release|x64
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Release|x64.Build.0 = Release|x64
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Release|x86.ActiveCfg = Release|Win32
+		{3BA495D3-28B1-4292-96C8-EE5F413407F2}.Release|x86.Build.0 = Release|Win32
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Debug|Any CPU.Build.0 = Debug|x64
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Debug|x64.ActiveCfg = Debug|x64
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Debug|x64.Build.0 = Debug|x64
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Debug|x86.ActiveCfg = Debug|Win32
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Debug|x86.Build.0 = Debug|Win32
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Release|Any CPU.ActiveCfg = Release|x64
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Release|Any CPU.Build.0 = Release|x64
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Release|x64.ActiveCfg = Release|x64
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Release|x64.Build.0 = Release|x64
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Release|x86.ActiveCfg = Release|Win32
+		{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}.Release|x86.Build.0 = Release|Win32
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Debug|x64.ActiveCfg = Debug|x64
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Debug|x64.Build.0 = Debug|x64
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Debug|x86.Build.0 = Debug|Any CPU
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Release|x64.ActiveCfg = Release|x64
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Release|x64.Build.0 = Release|x64
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Release|x86.ActiveCfg = Release|Any CPU
+		{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {116B8917-E3A8-4507-822C-3F63B7EC907D}
+	EndGlobalSection
+EndGlobal

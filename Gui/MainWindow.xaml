@@ -1,0 +1,86 @@
+﻿<Window x:Class="Gui.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Gui"
+        mc:Ignorable="d"
+        Title="Gui"
+        WindowState="Maximized">
+    <Window.Resources>
+        <Style TargetType="Border">
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="Gray"/>
+        </Style>
+    </Window.Resources>
+    <StackPanel>
+
+        <StackPanel Width="200" Margin="0 10 0 10">
+            <Button Command="{Binding LoadCameraCalibrationCommand}" Width="200">
+                <TextBlock Text="Load Camera Calibration"/>
+            </Button>
+
+            <Button Command="{Binding SaveCameraCalibrationCommand}"
+                    IsEnabled="{Binding IsCalibrated}"
+                    Width="200"
+                    Margin="0 20 0 0">
+                <TextBlock Text="Save Camera Calibration"/>
+            </Button>
+
+            <StackPanel Orientation="Horizontal" Margin="0 20 0 0">
+                <CheckBox IsChecked="{Binding ShowCalibrationInfo}" Margin="0 0 10 0"/>
+                <TextBlock Text="Show Camera Calibration Info"/>
+            </StackPanel>
+            
+            <Button Command="{Binding SaveCalibrationImageCommand}"
+                    IsEnabled="{Binding CanSaveCalibrationImage}"
+                    Width="200"
+                    Margin="0 20 0 0">
+                <TextBlock Text="Capture Calibration Image"/>
+            </Button>
+            
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Calibration Image Count: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding CalibrationImageCount}"/>
+            </StackPanel>
+            
+            <Button Command="{Binding CalibrateCameraCommand}"
+                    IsEnabled="{Binding CanCalibrateCamera}"
+                    Width="200"
+                    Margin="0 20 0 0">
+                <TextBlock Text="Calibrate Camera"/>
+            </Button>
+            
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Is Calibrated: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding IsCalibrated}"/>
+            </StackPanel>
+            
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Reprojection Error: " FontWeight="Bold"/>
+                <TextBlock Text="{Binding ReprojectionError, StringFormat={}{0:F3}}"/>
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCalibrated}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+            </StackPanel>
+
+            <Button Command="{Binding ResetCalibrationCommand}"
+                    Width="200"
+                    Margin="0 20 0 0">
+                <TextBlock Text="Reset Calibration"/>
+            </Button>
+
+        </StackPanel>
+
+        <Border Width="640">
+            <Image Source="{Binding Image}"/>
+        </Border>
+    </StackPanel>
+</Window>
