@@ -1,7 +1,9 @@
-\.vs
-\build
-\obj
-\bin
+/.vs
+/build/conan/generated/
+/build/obj
+/build/bin
+
+**/obj
 
 *.vcxproj.user
 *.csproj.user

@@ -132,9 +132,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\build\conan\generated\Debug-x64\conanbuildinfo.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\build\conan\generated\Release-x64\conanbuildinfo.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -145,8 +147,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\opencv\build\include;C:\Users\lscho\Downloads\glew-2.1.0-win32\glew-2.1.0\include;C:\Users\lscho\Downloads\glfw-3.3.6.bin.WIN64\glfw-3.3.6.bin.WIN64\include;C:\Users\lscho\Downloads\glm-0.9.9.7\glm;C:\Users\lscho\Downloads\assimp-5.2.2\assimp-5.2.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\opencv\build\x64\vc15\lib;C:\Users\lscho\Downloads\glew-2.1.0-win32\glew-2.1.0\lib\Release\x64;C:\Users\lscho\Downloads\glfw-3.3.6.bin.WIN64\glfw-3.3.6.bin.WIN64\lib-vc2022;C:\Users\lscho\Downloads\assimp-5.2.2\assimp-5.2.2\lib\Debug;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\lscho\Downloads\assimp-5.2.2\assimp-5.2.2\lib\Debug;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\obj\$(Platform)\$(Configuration)\</IntDir>
     <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
@@ -154,8 +156,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\opencv\build\include;C:\Users\lscho\Downloads\glew-2.1.0-win32\glew-2.1.0\include;C:\Users\lscho\Downloads\glfw-3.3.6.bin.WIN64\glfw-3.3.6.bin.WIN64\include;C:\Users\lscho\Downloads\glm-0.9.9.7\glm;C:\Users\lscho\Downloads\assimp-5.2.2\assimp-5.2.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\opencv\build\x64\vc15\lib;C:\Users\lscho\Downloads\glew-2.1.0-win32\glew-2.1.0\lib\Release\x64;C:\Users\lscho\Downloads\glfw-3.3.6.bin.WIN64\glfw-3.3.6.bin.WIN64\lib-vc2022;C:\Users\lscho\Downloads\assimp-5.2.2\assimp-5.2.2\lib\Release;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\lscho\Downloads\assimp-5.2.2\assimp-5.2.2\lib\Release;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\obj\$(Platform)\$(Configuration)\</IntDir>
     <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
@@ -203,7 +205,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp-vc143-mtd.lib;opencv_world455d.lib;opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>XCOPY "$(ProjectDir)assets" "$(TargetDir)assets\" /S /Y
@@ -229,7 +231,7 @@ XCOPY "$(ProjectDir)shaders" "$(TargetDir)shaders\" /S /Y</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>assimp-vc143-mt.lib;opencv_world455.lib;opengl32.lib;glew32s.lib;glfw3.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>XCOPY "$(ProjectDir)assets" "$(TargetDir)assets\" /S /Y
