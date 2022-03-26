@@ -5,6 +5,7 @@
 
 #include "Camera.h"
 #include "ObjectDrawer.h"
+#include "Constants.h"
 
 #pragma warning(push, 0)        
 #include <opencv2/core/core.hpp>
@@ -172,8 +173,6 @@ std::vector<unsigned char> Camera::getImage(bool showCalibrationInfo)
 		float cy = m_pImpl->cameraMatrix.at<double>(1, 2);
 		float width = m_pImpl->imageSize.width;
 		float height = m_pImpl->imageSize.height;
-		float znear = 1.0f;
-		float zfar = 1000000.0f; //TODO: this number is duplicated in ObjectDrawer
 
 		//From https://amytabb.com/tips/tutorials/2019/06/28/OpenCV-to-OpenGL-tutorial-essentials/
 		glm::mat4 intrinsic;
@@ -189,12 +188,12 @@ std::vector<unsigned char> Camera::getImage(bool showCalibrationInfo)
 
 		intrinsic[2][0] = (width-cx);
 		intrinsic[2][1] = (height-cy);
-		intrinsic[2][2] = -(znear + zfar);
+		intrinsic[2][2] = -(Z_NEAR + Z_FAR);
 		intrinsic[2][3] = 1.0;
 
 		intrinsic[3][0] = 0.0;
 		intrinsic[3][1] = 0.0;
-		intrinsic[3][2] = znear * zfar;
+		intrinsic[3][2] = Z_NEAR * Z_FAR;
 		intrinsic[3][3] = 0.0;
 
 		//Draw AR objects into the scene. This will draw xyz axes and a teapot.

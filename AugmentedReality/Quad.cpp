@@ -12,15 +12,17 @@
 #include <gl/glew.h>
 
 Quad::Quad()
-{
-	m_vertices =
-	{
+	: Quad({
 		VertexBuilder().addPosition(glm::vec3(-1.0f, -1.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 0.0f)).build(),
-		VertexBuilder().addPosition(glm::vec3( 1.0f, -1.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 0.0f)).build(),
+		VertexBuilder().addPosition(glm::vec3(1.0f, -1.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 0.0f)).build(),
 		VertexBuilder().addPosition(glm::vec3(-1.0f,  1.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 1.0f)).build(),
-		VertexBuilder().addPosition(glm::vec3( 1.0f,  1.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 1.0f)).build(),
-	};
+		VertexBuilder().addPosition(glm::vec3(1.0f,  1.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 1.0f)).build()})
+{
+}
 
+Quad::Quad(std::vector<Vertex> const& vertices)
+	: m_vertices(vertices)
+{
 	glGenVertexArrays(1, &m_vertexArrayObject);
 	glGenBuffers(1, &m_vertexBufferObject);
 
@@ -31,6 +33,9 @@ Quad::Quad()
 
 	glEnableVertexAttribArray(GLSL_POSITION_LOCATION);
 	glVertexAttribPointer(GLSL_POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+
+	glEnableVertexAttribArray(GLSL_COLOR_LOCATION);
+	glVertexAttribPointer(GLSL_COLOR_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
 
 	glEnableVertexAttribArray(GLSL_TEXTURE_COORD_LOCATION);
 	glVertexAttribPointer(GLSL_TEXTURE_COORD_LOCATION, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textureCoord));

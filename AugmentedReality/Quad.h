@@ -17,6 +17,7 @@ class Quad
 {
 public:
 	Quad();
+	Quad(std::vector<Vertex> const& vertices);
 
 	virtual ~Quad();
 

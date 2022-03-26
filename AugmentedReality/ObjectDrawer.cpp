@@ -10,6 +10,7 @@
 #include "DrawableObject.h"
 #include "LineSegments.h"
 #include "Quad.h"
+#include "Constants.h"
 
 #include <Windows.h>
 
@@ -28,6 +29,8 @@
 #include <cstddef>
 #include <format>
 
+#include <stb_image.h>
+
 struct ObjectDrawer::Impl
 {
 	GLFWwindow* pWindow;
@@ -41,6 +44,9 @@ struct ObjectDrawer::Impl
 	std::vector<std::shared_ptr<DrawableObject>> teapotMeshes;
 	std::shared_ptr<DrawableObject> pAxes;
 	std::shared_ptr<DrawableObject> pQuad;
+
+	std::shared_ptr<DrawableObject> pTable;
+	GLuint tableTexture;
 
 	Impl(size_t width, size_t height)
 		: width(width)
@@ -79,6 +85,28 @@ struct ObjectDrawer::Impl
 
 		pAxes = std::make_shared<LineSegments>(axesVertices);
 		pQuad = std::make_shared<Quad>();
+
+
+		std::vector<Vertex> quadVertices =
+		{
+			VertexBuilder().addPosition(glm::vec3(-1.0f, 1.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 0.0f)).build(),
+			VertexBuilder().addPosition(glm::vec3(10.0f, 1.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 0.0f)).build(),
+			VertexBuilder().addPosition(glm::vec3(-1.0f, -7.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 1.0f)).build(),
+			VertexBuilder().addPosition(glm::vec3(10.0f, -7.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 1.0f)).build()
+		};
+		pTable = std::make_shared<Quad>(quadVertices);
+
+		int imageWidth, imageHeight, nrComponents;
+		unsigned char* imageData = stbi_load("./assets/tabletop.jpeg", &imageWidth, &imageHeight, &nrComponents, 0);
+
+		glGenTextures(1, &tableTexture);
+		glBindTexture(GL_TEXTURE_2D, tableTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	GLuint createShaderProgram(std::string const& vertexShaderPath, std::string const& fragmentShaderPath)
@@ -145,19 +173,15 @@ struct ObjectDrawer::Impl
 
 	glm::mat4 generateProjectionMatrix()
 	{
-		//TODO: Duplicated in Camera
-		float znear = 1.0f;
-		float zfar = 1000000.0f;
-
 		//From https://amytabb.com/tips/tutorials/2019/06/28/OpenCV-to-OpenGL-tutorial-essentials/
 		glm::mat4 projection(0.0f);
 		projection[0][0] = -2.0 / width;
 		projection[1][1] = 2.0 / height;
-		projection[2][2] = -2.0 / (zfar - znear);
+		projection[2][2] = -2.0 / (Z_FAR - Z_NEAR);
 		projection[3][3] = 1.0;
 		projection[3][0] = 1.0;
 		projection[3][1] = -1.0;
-		projection[3][2] = -(zfar + znear) / (zfar - znear);
+		projection[3][2] = -(Z_FAR + Z_NEAR) / (Z_FAR - Z_NEAR);
 		return projection;
 	}
 };
@@ -187,8 +211,6 @@ void ObjectDrawer::draw(unsigned char * imageData, glm::mat4 const& view)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-		GLint imageUniformLocation = glGetUniformLocation(m_pImpl->imageShaderProgram, "Image");
-
 		m_pImpl->pQuad->draw();
 
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -209,12 +231,15 @@ void ObjectDrawer::draw(unsigned char * imageData, glm::mat4 const& view)
 		//Render teapot
 		{
 			glm::mat4 model(1.0f);
-			model = glm::translate(model, glm::vec3(4.0f, -2.5f, 1.5f));
+			model = glm::translate(model, glm::vec3(4.0f, -2.5f, 2.0f));
 			model = glm::rotate(model, 0.5f * 3.1415926f, glm::vec3(1.0f, 0.0f, 0.0f));
 			model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
 
 			GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 			glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+
+			GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
+			glUniform1i(hasImageUniformLocation, false);
 
 			for (auto const& pTeapotMesh : m_pImpl->teapotMeshes)
 			{
@@ -231,7 +256,27 @@ void ObjectDrawer::draw(unsigned char * imageData, glm::mat4 const& view)
 			GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 			glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
 
+			GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
+			glUniform1i(hasImageUniformLocation, false);
+
 			m_pImpl->pAxes->draw();
+		}
+
+		{
+			glBindTexture(GL_TEXTURE_2D, m_pImpl->tableTexture);
+
+			glm::mat4 model(1.0f);
+			model = glm::translate(model, glm::vec3(-0.08f, 0.08f, 0.0f));
+
+			GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
+			glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+
+			GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
+			glUniform1i(hasImageUniformLocation, true);
+
+			m_pImpl->pTable->draw();
+
+			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 	}
 
