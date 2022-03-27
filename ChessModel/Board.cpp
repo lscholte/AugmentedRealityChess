@@ -93,10 +93,10 @@ namespace Model
 
 	bool Board::isPositionLegal(bool isWhite, Position position) const
 	{
-		if (position.rank >= 1 &&
-			position.file >= 1 &&
-			position.rank <= 8 &&
-			position.file <= 8)
+		if (position.rank < 1 ||
+			position.file < 1 ||
+			position.rank > 8 ||
+			position.file > 8)
 		{
 			//Position is outside chessboard boundary
 			return false;
