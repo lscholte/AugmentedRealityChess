@@ -4,6 +4,7 @@
 // See King.h for documentation
 
 #include "King.h"
+#include "Board.h"
 #include "Position.h"
 
 namespace Chess
@@ -19,6 +20,14 @@ namespace Model
 	PieceType King::getType() const
 	{
 		return PieceType::King;
+	}
+
+	std::vector<Position> King::getLegalMoves(Board const& board) const
+	{
+		//TODO: Implement this
+		//Can move 1 square only
+		//Can also castle under certain circumstances (ignore this for now)
+		return {};
 	}
 }
 }

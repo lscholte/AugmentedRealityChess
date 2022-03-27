@@ -4,6 +4,7 @@
 // See Bishop.h for documentation
 
 #include "Bishop.h"
+#include "Board.h"
 #include "Position.h"
 
 namespace Chess
@@ -19,6 +20,13 @@ namespace Model
 	PieceType Bishop::getType() const
 	{
 		return PieceType::Bishop;
+	}
+
+	std::vector<Position> Bishop::getLegalMoves(Board const& board) const
+	{
+		//TODO: Implement this
+		//Can move diagonally only
+		return {};
 	}
 }
 }

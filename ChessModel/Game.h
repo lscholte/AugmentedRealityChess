@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Macros.h"
+
 #include <memory>
 
 namespace Chess
@@ -11,8 +13,9 @@ namespace Chess
 namespace Model
 {
 	class Board;
+	struct Position;
 
-	class Game
+	class EXPORT Game
 	{
 	public:
 		Game();
@@ -21,6 +24,8 @@ namespace Model
 		bool isWhiteMove() const;
 
 		Board const& getBoard() const;
+
+		bool move(Position currentPosition, Position newPosition);
 
 	private:
 		struct Impl;

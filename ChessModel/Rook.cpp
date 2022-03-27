@@ -4,6 +4,7 @@
 // See Rook.h for documentation
 
 #include "Rook.h"
+#include "Board.h"
 #include "Position.h"
 
 namespace Chess
@@ -19,6 +20,13 @@ namespace Model
 	PieceType Rook::getType() const
 	{
 		return PieceType::Rook;
+	}
+
+	std::vector<Position> Rook::getLegalMoves(Board const& board) const
+	{
+		//TODO: Implement this
+		//Can move horizontally or vertically
+		return {};
 	}
 }
 }

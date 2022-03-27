@@ -75,5 +75,49 @@ namespace Model
 	{
 		return m_pImpl->pieces;
 	}
+
+	std::shared_ptr<Piece> Board::getPiece(Position position) const
+	{
+		auto iter = std::find_if(
+			m_pImpl->pieces.cbegin(),
+			m_pImpl->pieces.cend(),
+			[position](std::shared_ptr<Piece> pPiece)
+			{
+				return pPiece->getPosition() == position;
+			});
+
+		return iter == m_pImpl->pieces.cend()
+			? nullptr
+			: *iter;
+	}
+
+	bool Board::isPositionLegal(bool isWhite, Position position) const
+	{
+		if (position.rank >= 1 &&
+			position.file >= 1 &&
+			position.rank <= 8 &&
+			position.file <= 8)
+		{
+			//Position is outside chessboard boundary
+			return false;
+		}
+
+		auto iter = std::find_if(
+			m_pImpl->pieces.cbegin(),
+			m_pImpl->pieces.cend(),
+			[isWhite, position](std::shared_ptr<Piece> pPiece)
+			{
+				return pPiece->isWhite() == isWhite && pPiece->getPosition() == position;
+			});
+		if (iter != m_pImpl->pieces.cend())
+		{
+			//A piece of the same color exists in the position
+			return false;
+		}
+
+		//TODO: Check if King is in check
+
+		return true;
+	}
 }
 }

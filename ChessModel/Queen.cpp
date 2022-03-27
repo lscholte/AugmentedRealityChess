@@ -4,6 +4,7 @@
 // See Queen.h for documentation
 
 #include "Queen.h"
+#include "Board.h"
 #include "Position.h"
 
 namespace Chess
@@ -19,6 +20,13 @@ namespace Model
 	PieceType Queen::getType() const
 	{
 		return PieceType::Queen;
+	}
+
+	std::vector<Position> Queen::getLegalMoves(Board const& board) const
+	{
+		//TODO: Implement this
+		//Can move horizontally, vertically, or diagonally
+		return {};
 	}
 }
 }

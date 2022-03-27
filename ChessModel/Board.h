@@ -14,6 +14,7 @@ namespace Chess
 namespace Model
 {
 	class Piece;
+	struct Position;
 
 	class EXPORT Board
 	{
@@ -22,6 +23,15 @@ namespace Model
 		virtual ~Board();
 
 		std::vector<std::shared_ptr<Piece>> const& getPieces() const;
+
+		/// <summary>
+		/// Gets the piece at the specified position.
+		/// </summary>
+		/// <param name="position">The position to search for a piece</param>
+		/// <returns>The piece at the position or nullptr if no piece exists</returns>
+		std::shared_ptr<Piece> getPiece(Position position) const;
+
+		bool isPositionLegal(bool isWhite, Position position) const;
 
 	private:
 		struct Impl;

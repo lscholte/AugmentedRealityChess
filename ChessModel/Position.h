@@ -15,10 +15,10 @@ namespace Model
 		unsigned char rank;
 		unsigned char file;
 
-		Position(unsigned char rank, unsigned char file)
-			: rank(rank)
-			, file(file)
-		{}
+		Position(unsigned char rank, unsigned char file);
+
+		bool operator==(Position other);
+		bool operator!=(Position other);
 	};
 }
 }

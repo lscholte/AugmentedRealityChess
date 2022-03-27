@@ -173,6 +173,7 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Position.cpp" />
     <ClCompile Include="Queen.cpp">
       <SubType>
       </SubType>
