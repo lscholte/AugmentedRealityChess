@@ -42,7 +42,7 @@ namespace
 		{
 			for (int x = 0; x < checkerboardSize.width; ++x)
 			{
-				worldCoordinateList.emplace_back(x, -y, 0.0f);
+				worldCoordinateList.emplace_back(x+1.5f, -(y+1.5f), 0.0f);
 			}
 		}
 

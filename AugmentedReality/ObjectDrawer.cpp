@@ -12,6 +12,10 @@
 #include "Quad.h"
 #include "Constants.h"
 
+#include <Board.h>
+#include <Piece.h>
+#include <Position.h>
+
 #include <Windows.h>
 
 #define GLEW_STATIC
@@ -41,12 +45,27 @@ struct ObjectDrawer::Impl
 
 	glm::mat4 projection;
 
-	std::vector<std::shared_ptr<DrawableObject>> teapotMeshes;
+	std::vector<std::shared_ptr<DrawableObject>> whitePawn;
+	std::vector<std::shared_ptr<DrawableObject>> whiteRook;
+	std::vector<std::shared_ptr<DrawableObject>> whiteKnight;
+	std::vector<std::shared_ptr<DrawableObject>> whiteBishop;
+	std::vector<std::shared_ptr<DrawableObject>> whiteQueen;
+	std::vector<std::shared_ptr<DrawableObject>> whiteKing;
+
+	std::vector<std::shared_ptr<DrawableObject>> blackPawn;
+	std::vector<std::shared_ptr<DrawableObject>> blackRook;
+	std::vector<std::shared_ptr<DrawableObject>> blackKnight;
+	std::vector<std::shared_ptr<DrawableObject>> blackBishop;
+	std::vector<std::shared_ptr<DrawableObject>> blackQueen;
+	std::vector<std::shared_ptr<DrawableObject>> blackKing;
+
 	std::shared_ptr<DrawableObject> pAxes;
 	std::shared_ptr<DrawableObject> pQuad;
 
 	std::shared_ptr<DrawableObject> pTable;
 	GLuint tableTexture;
+
+	Chess::Model::Board board;
 
 	Impl(size_t width, size_t height)
 		: width(width)
@@ -66,10 +85,94 @@ struct ObjectDrawer::Impl
 
 		projection = generateProjectionMatrix();
 
-		bool result = ObjectLoader().load("./assets/chess/knight.stl", teapotMeshes);
-		if (!result)
+		//Black Chess Pieces
+		glm::vec3 whiteColor(1.0f, 0.95f, 0.84f);
 		{
-			throw std::runtime_error("Failed to load mesh");
+			bool result = ObjectLoader().load("./assets/chess/pawn.stl", whitePawn, whiteColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/rook.stl", whiteRook, whiteColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/knight.stl", whiteKnight, whiteColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/bishop.stl", whiteBishop, whiteColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/queen.stl", whiteQueen, whiteColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/king.stl", whiteKing, whiteColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		
+		//Black Chess Pieces
+		glm::vec3 blackColor(0.1f, 0.1f, 0.1f);
+		{
+			bool result = ObjectLoader().load("./assets/chess/pawn.stl", blackPawn, blackColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/rook.stl", blackRook, blackColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/knight.stl", blackKnight, blackColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/bishop.stl", blackBishop, blackColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/queen.stl", blackQueen, blackColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
+		}
+		{
+			bool result = ObjectLoader().load("./assets/chess/king.stl", blackKing, blackColor);
+			if (!result)
+			{
+				throw std::runtime_error("Failed to load mesh");
+			}
 		}
 
 		//Create Axis vertices with particular positions and color
@@ -184,6 +287,34 @@ struct ObjectDrawer::Impl
 		projection[3][2] = -(Z_FAR + Z_NEAR) / (Z_FAR - Z_NEAR);
 		return projection;
 	}
+
+	std::vector<std::shared_ptr<DrawableObject>> getDrawableChessPiece(bool isWhite, Chess::Model::PieceType type)
+	{
+		if (isWhite)
+		{
+			switch (type)
+			{
+			case Chess::Model::PieceType::Pawn:		return whitePawn;
+			case Chess::Model::PieceType::Rook:		return whiteRook;
+			case Chess::Model::PieceType::Knight:	return whiteKnight;
+			case Chess::Model::PieceType::Bishop:	return whiteBishop;
+			case Chess::Model::PieceType::Queen:	return whiteQueen;
+			case Chess::Model::PieceType::King:		return whiteKing;
+			}
+		}
+		else
+		{
+			switch (type)
+			{
+			case Chess::Model::PieceType::Pawn:		return blackPawn;
+			case Chess::Model::PieceType::Rook:		return blackRook;
+			case Chess::Model::PieceType::Knight:	return blackKnight;
+			case Chess::Model::PieceType::Bishop:	return blackBishop;
+			case Chess::Model::PieceType::Queen:	return blackQueen;
+			case Chess::Model::PieceType::King:		return blackKing;
+			}
+		}
+	}
 };
 
 ObjectDrawer::ObjectDrawer(size_t width, size_t height)
@@ -230,53 +361,66 @@ void ObjectDrawer::draw(unsigned char * imageData, glm::mat4 const& view)
 
 		//Render teapot
 		{
-			glm::mat4 model(1.0f);
-			model = glm::translate(model, glm::vec3(4.0f, -2.5f, 0.0f));
-			model = glm::scale(model, glm::vec3(0.05, 0.05f, 0.05f));
-
-			GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
-			glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
-
 			GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
 			glUniform1i(hasImageUniformLocation, false);
 
-			for (auto const& pTeapotMesh : m_pImpl->teapotMeshes)
+			for (auto const& pChessPiece : m_pImpl->board.getPieces())
 			{
-				pTeapotMesh->draw();
+				Chess::Model::Position position = pChessPiece->getPosition();
+
+				float constexpr chessPieceScaleFactor = 0.025f;
+
+				glm::mat4 model(1.0f);
+				model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.0f));
+				model = pChessPiece->isWhite()
+					? glm::rotate(model, -0.5f * 3.1415926f, glm::vec3(0.0f, 0.0f, 1.0f))
+					: glm::rotate(model, 0.5f * 3.1415926f, glm::vec3(0.0f, 0.0f, 1.0f));
+				model = glm::scale(model, glm::vec3(chessPieceScaleFactor));
+
+				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
+				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+
+				std::vector<std::shared_ptr<DrawableObject>> chessPieceParts = 
+					m_pImpl->getDrawableChessPiece(pChessPiece->isWhite(), pChessPiece->getType());
+
+				for (auto const& chessPiecePart : chessPieceParts)
+				{
+					chessPiecePart->draw();
+				}
 			}
 		}
 
-		//Render axes
-		{
-			//Leave axes at origin
-			glm::mat4 model(1.0f);
-			model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+		////Render axes
+		//{
+		//	//Leave axes at origin
+		//	glm::mat4 model(1.0f);
+		//	model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
 
-			GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
-			glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+		//	GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
+		//	glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
 
-			GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
-			glUniform1i(hasImageUniformLocation, false);
+		//	GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
+		//	glUniform1i(hasImageUniformLocation, false);
 
-			m_pImpl->pAxes->draw();
-		}
+		//	m_pImpl->pAxes->draw();
+		//}
 
-		{
-			glBindTexture(GL_TEXTURE_2D, m_pImpl->tableTexture);
+		//{
+		//	glBindTexture(GL_TEXTURE_2D, m_pImpl->tableTexture);
 
-			glm::mat4 model(1.0f);
-			model = glm::translate(model, glm::vec3(-0.08f, 0.08f, 0.0f));
+		//	glm::mat4 model(1.0f);
+		//	model = glm::translate(model, glm::vec3(-0.08f, 0.08f, 0.0f));
 
-			GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
-			glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+		//	GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
+		//	glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
 
-			GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
-			glUniform1i(hasImageUniformLocation, true);
+		//	GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
+		//	glUniform1i(hasImageUniformLocation, true);
 
-			m_pImpl->pTable->draw();
+		//	m_pImpl->pTable->draw();
 
-			glBindTexture(GL_TEXTURE_2D, 0);
-		}
+		//	glBindTexture(GL_TEXTURE_2D, 0);
+		//}
 	}
 
 	//Read the image data back

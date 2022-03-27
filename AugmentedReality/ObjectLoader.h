@@ -6,6 +6,8 @@
 
 #include "DrawableObject.h"
 
+#include <glm/fwd.hpp>
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -24,8 +26,10 @@ public:
 	/// </summary>
 	/// <param name="filePath">The path to a file to read</param>
 	/// <param name="meshes">The resulting vector of DrawableObjects</param>
-	/// <returns></returns>
+	/// <param name="color">The color to assign the vertices</param>
+	/// <returns>True if the object loaded successfully, false otherwise</returns>
 	bool load(
 		std::string const& filePath,
-		std::vector<std::shared_ptr<DrawableObject>>& teapotMeshes);
+		std::vector<std::shared_ptr<DrawableObject>>& whiteKnight,
+		glm::vec3 const& color);
 };

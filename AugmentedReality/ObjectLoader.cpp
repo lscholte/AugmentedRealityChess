@@ -16,7 +16,7 @@
 
 namespace
 {
-	std::shared_ptr<DrawableObject> processMesh(aiMesh* pMesh, const aiScene* pScene)
+	std::shared_ptr<DrawableObject> processMesh(aiMesh* pMesh, const aiScene* pScene, glm::vec3 const& color)
 	{
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -33,7 +33,7 @@ namespace
 			//Setting a hardcoded color
 			//is basically a lazy placeholder for not trying
 			//to load textures.
-			vertex.color = glm::vec3(1.0f, 0.95f, 0.84f);
+			vertex.color = color;
 
 			vertices.push_back(std::move(vertex));
 		}
@@ -48,16 +48,16 @@ namespace
 		return std::make_shared<TriangleMesh>(vertices, indices);
 	}
 
-	void processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<DrawableObject>>& teapotMeshes)
+	void processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<DrawableObject>>& whiteKnight, glm::vec3 const& color)
 	{
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			teapotMeshes.push_back(processMesh(mesh, scene));
+			whiteKnight.push_back(processMesh(mesh, scene, color));
 		}
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
 		{
-			processNode(node->mChildren[i], scene, teapotMeshes);
+			processNode(node->mChildren[i], scene, whiteKnight, color);
 		}
 	}
 }
@@ -67,7 +67,8 @@ ObjectLoader::~ObjectLoader() = default;
 //https://learnopengl.com/Model-Loading/Assimp
 bool ObjectLoader::load(
 	std::string const& filePath,
-	std::vector<std::shared_ptr<DrawableObject>>& teapotMeshes)
+	std::vector<std::shared_ptr<DrawableObject>>& whiteKnight,
+	glm::vec3 const& color)
 {
 	Assimp::Importer importer;
 	aiScene const * pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenNormals);
@@ -76,8 +77,8 @@ bool ObjectLoader::load(
 		return false;
 	}
 
-	teapotMeshes.clear();
-	processNode(pScene->mRootNode, pScene, teapotMeshes);
+	whiteKnight.clear();
+	processNode(pScene->mRootNode, pScene, whiteKnight, color);
 
 	return true;
 }

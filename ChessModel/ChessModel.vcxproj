@@ -18,83 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Constants.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="DrawableObject.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="LineSegments.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Quad.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="TriangleMesh.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Macros.h" />
-    <ClInclude Include="Camera.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="Vertex.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="VertexBuilder.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="ObjectDrawer.h" />
-    <ClInclude Include="ObjectLoader.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="Camera.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="LineSegments.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="Quad.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="TriangleMesh.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="VertexBuilder.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="ObjectDrawer.cpp" />
-    <ClCompile Include="ObjectLoader.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ChessModel\ChessModel.vcxproj">
-      <Project>{b1d22166-171e-4d2c-90ca-e648f65a3b48}</Project>
-    </ProjectReference>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{3ba495d3-28b1-4292-96c8-ee5f413407f2}</ProjectGuid>
-    <RootNamespace>AugmentedReality</RootNamespace>
+    <ProjectGuid>{b1d22166-171e-4d2c-90ca-e648f65a3b48}</ProjectGuid>
+    <RootNamespace>ChessModel</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -137,11 +65,9 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\build\conan\generated\Debug-x64\conanbuildinfo.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\build\conan\generated\Release-x64\conanbuildinfo.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -152,21 +78,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\obj\$(Platform)\$(Configuration)\</IntDir>
-    <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
-    <CopyLocalProjectReference>false</CopyLocalProjectReference>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
-    <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)build\bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)build\obj\$(Platform)\$(Configuration)\</IntDir>
-    <CopyLocalDeploymentContent>false</CopyLocalDeploymentContent>
-    <CopyLocalProjectReference>false</CopyLocalProjectReference>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -203,21 +121,11 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <DisableSpecificWarnings>4251</DisableSpecificWarnings>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)ChessModel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>XCOPY "$(ProjectDir)assets" "$(TargetDir)assets\" /S /Y
-XCOPY "$(ProjectDir)shaders" "$(TargetDir)shaders\" /S /Y</Command>
-      <RunPostBuildEvent>Always</RunPostBuildEvent>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -228,24 +136,98 @@ XCOPY "$(ProjectDir)shaders" "$(TargetDir)shaders\" /S /Y</Command>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <DisableSpecificWarnings>4251</DisableSpecificWarnings>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-      <PrecompiledHeaderFile>Pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)ChessModel;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
-    <PostBuildEvent>
-      <Command>XCOPY "$(ProjectDir)assets" "$(TargetDir)assets\" /S /Y
-XCOPY "$(ProjectDir)shaders" "$(TargetDir)shaders\" /S /Y</Command>
-      <RunPostBuildEvent>Always</RunPostBuildEvent>
-    </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Bishop.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Board.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="King.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Knight.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Pawn.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Piece.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Queen.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Rook.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Bishop.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Board.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="King.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Knight.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Macros.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Pawn.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Piece.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Position.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Queen.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="Rook.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

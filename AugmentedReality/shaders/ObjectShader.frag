@@ -24,7 +24,7 @@ void main()
 	
 	if (FragmentNormal != vec3(0.0f, 0.0f, 0.0f))
 	{
-		vec3 LightPosition = vec3(3.0, -3.0, 10.0);
+		vec3 LightPosition = vec3(4.5, -4.5, 5.0);
 		vec3 L = normalize(FragmentWorldPosition.xyz - LightPosition);
 		vec3 N = normalize(FragmentNormal);
 
