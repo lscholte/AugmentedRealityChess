@@ -91,12 +91,21 @@ namespace Model
 			: *iter;
 	}
 
-	bool Board::isPositionLegal(bool isWhite, Position position) const
+	bool Board::isPositionOnBoard(Position position) const
 	{
 		if (position.rank < 1 ||
 			position.file < 1 ||
 			position.rank > 8 ||
 			position.file > 8)
+		{
+			return false;
+		}
+		return true;
+	}
+
+	bool Board::isPositionLegal(bool isWhite, Position position) const
+	{
+		if (!isPositionOnBoard(position))
 		{
 			//Position is outside chessboard boundary
 			return false;

@@ -6,6 +6,8 @@
 
 #include "Piece.h"
 
+#include <memory>
+
 namespace Chess
 {
 namespace Model
@@ -20,6 +22,10 @@ namespace Model
 		virtual PieceType getType() const override;
 
 		virtual std::vector<Position> getLegalMoves(Board const& board) const override;
+
+	private:
+		struct Impl;
+		std::shared_ptr<Impl> m_pImpl;
 
 	};
 }

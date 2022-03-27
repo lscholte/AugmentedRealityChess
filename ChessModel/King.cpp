@@ -24,10 +24,30 @@ namespace Model
 
 	std::vector<Position> King::getLegalMoves(Board const& board) const
 	{
-		//TODO: Implement this
-		//Can move 1 square only
-		//Can also castle under certain circumstances (ignore this for now)
-		return {};
+		std::vector<Position> legalPositions;
+
+		Position currentPosition = getPosition();
+
+		auto checkAndPushPosition = [isWhite = isWhite(), currentPosition, &legalPositions, &board](Position positionToCheck)
+		{
+			if (board.isPositionLegal(isWhite, positionToCheck))
+			{
+				legalPositions.push_back(positionToCheck);
+			}
+		};
+
+		checkAndPushPosition(Position(currentPosition.rank + 1, currentPosition.file + 0));
+		checkAndPushPosition(Position(currentPosition.rank + 1, currentPosition.file + 1));
+		checkAndPushPosition(Position(currentPosition.rank + 0, currentPosition.file + 1));
+		checkAndPushPosition(Position(currentPosition.rank - 1, currentPosition.file + 1));
+		checkAndPushPosition(Position(currentPosition.rank - 1, currentPosition.file + 0));
+		checkAndPushPosition(Position(currentPosition.rank - 1, currentPosition.file - 1));
+		checkAndPushPosition(Position(currentPosition.rank + 0, currentPosition.file - 1));
+		checkAndPushPosition(Position(currentPosition.rank + 1, currentPosition.file - 1));
+
+		//TODO: Can also castle under certain circumstances (ignore this for now)
+
+		return legalPositions;
 	}
 }
 }

@@ -24,9 +24,59 @@ namespace Model
 
 	std::vector<Position> Rook::getLegalMoves(Board const& board) const
 	{
-		//TODO: Implement this
-		//Can move horizontally or vertically
-		return {};
+		std::vector<Position> legalPositions;
+
+		Position currentPosition = getPosition();
+
+		auto checkAndPushPosition = [isWhite = isWhite(), currentPosition, &legalPositions, &board](Position positionToCheck)
+		{
+			if (board.isPositionLegal(isWhite, positionToCheck))
+			{
+				legalPositions.push_back(positionToCheck);
+			}
+		};
+
+		//Go up rank
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.rank += 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go down rank
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.rank -= 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go up file
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.file += 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go down file
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.file -= 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		return legalPositions;
 	}
 }
 }

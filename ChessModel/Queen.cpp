@@ -24,9 +24,103 @@ namespace Model
 
 	std::vector<Position> Queen::getLegalMoves(Board const& board) const
 	{
-		//TODO: Implement this
-		//Can move horizontally, vertically, or diagonally
-		return {};
+		std::vector<Position> legalPositions;
+
+		Position currentPosition = getPosition();
+
+		auto checkAndPushPosition = [isWhite = isWhite(), currentPosition, &legalPositions, &board](Position positionToCheck)
+		{
+			if (board.isPositionLegal(isWhite, positionToCheck))
+			{
+				legalPositions.push_back(positionToCheck);
+			}
+		};
+
+		//Go up rank
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.rank += 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go down rank
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.rank -= 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go up file
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.file += 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go down file
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.file -= 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go up rank and up file
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.rank += 1;
+				positionToCheck.file += 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go down rank and up file
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.rank -= 1;
+				positionToCheck.file += 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go up rank and down file
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.rank += 1;
+				positionToCheck.file -= 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		//Go down rank and down file
+		{
+			Position positionToCheck = currentPosition;
+			do
+			{
+				positionToCheck.rank -= 1;
+				positionToCheck.file -= 1;
+				checkAndPushPosition(positionToCheck);
+			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
+		}
+
+		return legalPositions;
 	}
 }
 }

@@ -31,6 +31,7 @@ namespace Model
 		/// <returns>The piece at the position or nullptr if no piece exists</returns>
 		std::shared_ptr<Piece> getPiece(Position position) const;
 
+		bool isPositionOnBoard(Position position) const;
 		bool isPositionLegal(bool isWhite, Position position) const;
 
 	private:
