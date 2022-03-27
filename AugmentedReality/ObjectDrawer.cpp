@@ -66,7 +66,7 @@ struct ObjectDrawer::Impl
 
 		projection = generateProjectionMatrix();
 
-		bool result = ObjectLoader().load("./assets/teapot/teapot.obj", teapotMeshes);
+		bool result = ObjectLoader().load("./assets/chess/knight.stl", teapotMeshes);
 		if (!result)
 		{
 			throw std::runtime_error("Failed to load mesh");
@@ -231,9 +231,8 @@ void ObjectDrawer::draw(unsigned char * imageData, glm::mat4 const& view)
 		//Render teapot
 		{
 			glm::mat4 model(1.0f);
-			model = glm::translate(model, glm::vec3(4.0f, -2.5f, 2.0f));
-			model = glm::rotate(model, 0.5f * 3.1415926f, glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(2.5f, 2.5f, 2.5f));
+			model = glm::translate(model, glm::vec3(4.0f, -2.5f, 0.0f));
+			model = glm::scale(model, glm::vec3(0.05, 0.05f, 0.05f));
 
 			GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 			glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);

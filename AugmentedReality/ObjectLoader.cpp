@@ -33,7 +33,7 @@ namespace
 			//Setting a hardcoded color
 			//is basically a lazy placeholder for not trying
 			//to load textures.
-			vertex.color = glm::vec3(0.25f, 0.0f, 0.0f);
+			vertex.color = glm::vec3(1.0f, 0.95f, 0.84f);
 
 			vertices.push_back(std::move(vertex));
 		}
