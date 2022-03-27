@@ -62,6 +62,8 @@ struct ObjectDrawer::Impl
 	std::shared_ptr<DrawableObject> pAxes;
 	std::shared_ptr<DrawableObject> pQuad;
 
+	std::shared_ptr<DrawableObject> pHighlightableSquare;
+
 	std::shared_ptr<DrawableObject> pTable;
 	GLuint tableTexture;
 
@@ -174,6 +176,15 @@ struct ObjectDrawer::Impl
 				throw std::runtime_error("Failed to load mesh");
 			}
 		}
+
+		std::vector<Vertex> chessboardSquareVertices =
+		{
+			VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
+			VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
+			VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
+			VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build()
+		};
+		pHighlightableSquare = std::make_shared<Quad>(chessboardSquareVertices);
 
 		//Create Axis vertices with particular positions and color
 		std::vector<Vertex> axesVertices
@@ -387,6 +398,20 @@ void ObjectDrawer::draw(unsigned char * imageData, glm::mat4 const& view)
 				{
 					chessPiecePart->draw();
 				}
+			}
+		}
+		{
+			std::vector<Chess::Model::Position> legalMoves = m_pImpl->board.getPiece(Chess::Model::Position(1, 2))->getLegalMoves(m_pImpl->board);
+
+			for (auto const& position : legalMoves)
+			{
+				glm::mat4 model(1.0f);
+				model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.0f));
+
+				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
+				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+
+				m_pImpl->pHighlightableSquare->draw();
 			}
 		}
 
