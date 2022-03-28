@@ -106,5 +106,16 @@ namespace Model
 
 		return legalPositions;
 	}
+
+	bool Pawn::move(Board const& board, Position newPosition)
+	{
+		bool isMoveSuccessful = Piece::move(board, newPosition);
+
+		if (isMoveSuccessful)
+		{
+			m_pImpl->isFirstMove = false;
+		}
+		return isMoveSuccessful;
+	}
 }
 }
