@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Chess/Model/Macros.h>
+#include <Chess/Macros.h>
 
 namespace Chess
 {

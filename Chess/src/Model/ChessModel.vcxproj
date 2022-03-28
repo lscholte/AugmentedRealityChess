@@ -190,6 +190,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\Chess\Macros.h" />
     <ClInclude Include="..\..\include\Chess\Model\Bishop.h">
       <SubType>
       </SubType>
@@ -207,10 +208,6 @@
       </SubType>
     </ClInclude>
     <ClInclude Include="..\..\include\Chess\Model\Knight.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
-    <ClInclude Include="..\..\include\Chess\Model\Macros.h">
       <SubType>
       </SubType>
     </ClInclude>

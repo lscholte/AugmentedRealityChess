@@ -23,7 +23,7 @@
     <ClInclude Include="..\..\include\Chess\Controller\Controller.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\Chess\Controller\Macros.h">
+    <ClInclude Include="..\..\include\Chess\Macros.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

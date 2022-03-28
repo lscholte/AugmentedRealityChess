@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include <Chess/Controller/Macros.h>
+#include <Chess/Macros.h>
 
 #include <memory>
 
