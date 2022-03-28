@@ -184,6 +184,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="Size.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Chess\Model\Bishop.h">
@@ -230,6 +234,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="..\..\include\Chess\Model\Size.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

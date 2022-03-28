@@ -16,6 +16,7 @@
 #include <Chess/Model/Piece.h>
 #include <Chess/Model/Position.h>
 #include <Chess/Model/Game.h>
+#include <Chess/Model/Size.h>
 
 #include <Chess/Controller/Controller.h>
 
@@ -238,9 +239,9 @@ namespace ArView
 
 			glBindTexture(GL_TEXTURE_2D, 0);
 
-			for (int rank = 1; rank <= 8; ++rank)
+			for (unsigned char rank = 1; rank <= controller.getGame().getBoard().getSize().ranks; ++rank)
 			{
-				for (int file = 1; file <= 8; ++file)
+				for (unsigned char file = 1; file <= controller.getGame().getBoard().getSize().files; ++file)
 				{
 					glm::u8vec3 color(32 * rank - 1, 0, 32 * file - 1);
 					colorPositionMap.push_back(std::make_pair(color, Model::Position(rank, file)));
@@ -412,7 +413,7 @@ namespace ArView
 			GLint projectionUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Projection");
 			glUniformMatrix4fv(projectionUniformLocation, 1, GL_FALSE, &m_pImpl->projection[0][0]);
 
-			//Render teapot
+			//Render chess pieces
 			{
 				GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
 				glUniform1i(hasImageUniformLocation, false);
@@ -442,6 +443,8 @@ namespace ArView
 					}
 				}
 			}
+
+			//Render selected piece's legal moves
 			{
 				std::shared_ptr<Model::Piece> pSelectedPiece = m_pImpl->controller.getSelectedPiece();
 				if (pSelectedPiece)
@@ -474,31 +477,26 @@ namespace ArView
 			GLint projectionUniformLocation = glGetUniformLocation(m_pImpl->idShaderProgram, "Projection");
 			glUniformMatrix4fv(projectionUniformLocation, 1, GL_FALSE, &m_pImpl->projection[0][0]);
 
-			//TODO: board dimensions should come directly from the board
-			//for (int rank = 1; rank <= 8; ++rank)
 			for (auto const& positionColorPair : m_pImpl->positionColorMap)
 			{
-				//for (int file = 1; file <= 8; ++file)
+				glm::mat4 model(1.0f);
+				model = glm::translate(model, glm::vec3(positionColorPair.first.file, -positionColorPair.first.rank, 0.0f));
+
+				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->idShaderProgram, "Model");
+				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+
+				glm::vec3 color(positionColorPair.second.r / 255.0f, positionColorPair.second.g / 255.0f, positionColorPair.second.b / 255.0f);
+
+				std::vector<Vertex> chessboardSquareVertices =
 				{
-					glm::mat4 model(1.0f);
-					model = glm::translate(model, glm::vec3(positionColorPair.first.file, -positionColorPair.first.rank, 0.0f));
+					VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(color).build(),
+					VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(color).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(color).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(color).build()
+				};
+				auto square = std::make_shared<Quad>(chessboardSquareVertices);
 
-					GLint modelUniformLocation = glGetUniformLocation(m_pImpl->idShaderProgram, "Model");
-					glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
-
-					glm::vec3 color(positionColorPair.second.r / 255.0f, positionColorPair.second.g / 255.0f, positionColorPair.second.b / 255.0f);
-
-					std::vector<Vertex> chessboardSquareVertices =
-					{
-						VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(color).build(),
-						VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(color).build(),
-						VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(color).build(),
-						VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(color).build()
-					};
-					auto square = std::make_shared<Quad>(chessboardSquareVertices);
-
-					square->draw();
-				}
+				square->draw();
 			}
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}

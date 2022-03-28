@@ -15,12 +15,15 @@ namespace Model
 {
 	class Piece;
 	struct Position;
+	struct Size;
 
 	class EXPORT Board
 	{
 	public:
 		Board();
 		virtual ~Board();
+
+		Size getSize() const;
 
 		std::vector<std::shared_ptr<Piece>> const& getPieces() const;
 

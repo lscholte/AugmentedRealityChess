@@ -11,6 +11,7 @@
 #include <Chess/Model/Queen.h>
 #include <Chess/Model/King.h>
 #include <Chess/Model/Position.h>
+#include <Chess/Model/Size.h>
 
 #include <memory>
 
@@ -69,6 +70,11 @@ namespace Model
 	{}
 
 	Board::~Board() = default;
+
+	Size Board::getSize() const
+	{
+		return Size(8, 8);
+	}
 
 	std::vector<std::shared_ptr<Piece>> const& Board::getPieces() const
 	{
