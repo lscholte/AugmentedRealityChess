@@ -32,5 +32,14 @@ namespace Gui
             (DataContext as IDisposable)?.Dispose();
             DataContext = null;
         }
+
+        public void OnImageClick(object sender, MouseEventArgs args)
+        {
+            Point p = args.GetPosition(Image);
+            p.X /= Image.ActualWidth;
+            p.Y /= Image.ActualHeight;
+
+            (DataContext as ViewModel)?.HandleClick(p);
+        }
     }
 }

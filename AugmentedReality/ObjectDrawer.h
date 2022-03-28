@@ -7,6 +7,19 @@
 #include <glm/ext.hpp>
 
 #include <memory>
+#include <optional>
+
+namespace Chess
+{
+namespace Model
+{
+	struct Position;
+}
+namespace Controller
+{
+	class Controller;
+}
+}
 
 /// <summary>
 /// Draws virtual objects, in particular a teapot and xyz axes, onto an image.
@@ -20,7 +33,7 @@ public:
 	/// </summary>
 	/// <param name="width">The width of images that will be drawn on top of</param>
 	/// <param name="height">The height of images that will be drawn on top of</param>
-	ObjectDrawer(size_t width, size_t height);
+	ObjectDrawer(size_t width, size_t height, Chess::Controller::Controller const& controller);
 	virtual ~ObjectDrawer();
 
 	/// <summary>
@@ -29,6 +42,8 @@ public:
 	/// <param name="imageData">The image data in BGR format to draw onto, which will be modified</param>
 	/// <param name="view">Transformation matrix corresponding to the camera's intrinsic and extrinsic parameters</param>
 	void draw(unsigned char * imageData, glm::mat4 const& view);
+
+	std::optional<Chess::Model::Position> handleClick(float x, float y);
 
 private:
 	struct Impl;

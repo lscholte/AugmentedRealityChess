@@ -107,6 +107,8 @@ public:
 	/// <returns>The reprojection error if the camera is calibrated, NaN otherwise</returns>
 	double getReprojectionError() const;
 
+	void handleClick(float x, float y);
+
 private:
 	struct Impl;
 	std::shared_ptr<Impl> m_pImpl;

@@ -7,6 +7,9 @@
 #include "ObjectDrawer.h"
 #include "Constants.h"
 
+#include <Controller.h>
+#include <Position.h>
+
 #pragma warning(push, 0)        
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -70,13 +73,15 @@ struct Camera::Impl
 	bool isCalibrated;
 	double reprojectionError;
 
+	Chess::Controller::Controller controller;
+
 	ObjectDrawer objectDrawer;
 
 	Impl()
 		: videoCapture(0)
 		, cornersOrdered(false)
 		, imageSize(videoCapture.get(cv::CAP_PROP_FRAME_WIDTH), videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT))
-		, objectDrawer(imageSize.width, imageSize.height)
+		, objectDrawer(imageSize.width, imageSize.height, controller)
 	{
 		resetCalibration();
 	}
@@ -433,4 +438,15 @@ double Camera::getReprojectionError() const
 {
 	std::scoped_lock lock(m_pImpl->mutex);
 	return m_pImpl->reprojectionError;
+}
+
+void Camera::handleClick(float x, float y)
+{
+	std::scoped_lock lock(m_pImpl->mutex);
+	std::optional<Chess::Model::Position> oPosition = m_pImpl->objectDrawer.handleClick(x, y);
+
+	if (oPosition)
+	{
+		m_pImpl->controller.selectPosition(*oPosition);
+	}
 }

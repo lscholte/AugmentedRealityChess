@@ -88,3 +88,8 @@ double ManagedCamera::GetReprojectionError()
 {
 	return m_pCamera->getReprojectionError();
 }
+
+void ManagedCamera::HandleClick(float x, float y)
+{
+	m_pCamera->handleClick(x, y);
+}

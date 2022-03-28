@@ -15,6 +15,9 @@
 #include <Board.h>
 #include <Piece.h>
 #include <Position.h>
+#include <Game.h>
+
+#include <Controller.h>
 
 #include <Windows.h>
 
@@ -40,6 +43,7 @@ struct ObjectDrawer::Impl
 	GLFWwindow* pWindow;
 	GLuint imageShaderProgram;
 	GLuint objectShaderProgram;
+	GLuint idShaderProgram;
 
 	size_t width, height;
 
@@ -67,11 +71,17 @@ struct ObjectDrawer::Impl
 	std::shared_ptr<DrawableObject> pTable;
 	GLuint tableTexture;
 
-	Chess::Model::Board board;
+	Chess::Controller::Controller controller;
 
-	Impl(size_t width, size_t height)
+	std::vector<std::pair<glm::u8vec3, Chess::Model::Position>> colorPositionMap;
+	std::vector<std::pair<Chess::Model::Position, glm::u8vec3>> positionColorMap;
+
+	GLuint fbo;
+
+	Impl(size_t width, size_t height, Chess::Controller::Controller const& controller)
 		: width(width)
 		, height(height)
+		, controller(controller)
 	{
 		glfwInit();
 		glfwWindowHint(GLFW_SAMPLES, 4); //Enable anti-aliasing
@@ -84,6 +94,7 @@ struct ObjectDrawer::Impl
 
 		imageShaderProgram = createShaderProgram("./shaders/ImageShader.vert", "./shaders/ImageShader.frag");
 		objectShaderProgram = createShaderProgram("./shaders/ObjectShader.vert", "./shaders/ObjectShader.frag");
+		idShaderProgram = createShaderProgram("./shaders/IdShader.vert", "./shaders/IdShader.frag");
 
 		projection = generateProjectionMatrix();
 
@@ -221,6 +232,32 @@ struct ObjectDrawer::Impl
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		glBindTexture(GL_TEXTURE_2D, 0);
+
+		for (int rank = 1; rank <= 8; ++rank)
+		{
+			for (int file = 1; file <= 8; ++file)
+			{
+				glm::u8vec3 color(32 * rank - 1, 0, 32 * file - 1);
+				colorPositionMap.push_back(std::make_pair(color, Chess::Model::Position(rank, file)));
+				positionColorMap.push_back(std::make_pair(Chess::Model::Position(rank, file), color));
+			}
+		}
+
+		//Generate a framebuffer to render a texture to.
+		//This is used to render chess squares a particular color to ID them
+		glGenFramebuffers(1, &fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+		unsigned int texture;
+		glGenTextures(1, &texture);
+		glBindTexture(GL_TEXTURE_2D, texture);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture, 0);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	GLuint createShaderProgram(std::string const& vertexShaderPath, std::string const& fragmentShaderPath)
@@ -328,8 +365,8 @@ struct ObjectDrawer::Impl
 	}
 };
 
-ObjectDrawer::ObjectDrawer(size_t width, size_t height)
-	: m_pImpl(std::make_shared<Impl>(width, height))
+ObjectDrawer::ObjectDrawer(size_t width, size_t height, Chess::Controller::Controller const& controller)
+	: m_pImpl(std::make_shared<Impl>(width, height, controller))
 {
 }
 
@@ -375,7 +412,7 @@ void ObjectDrawer::draw(unsigned char * imageData, glm::mat4 const& view)
 			GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
 			glUniform1i(hasImageUniformLocation, false);
 
-			for (auto const& pChessPiece : m_pImpl->board.getPieces())
+			for (auto const& pChessPiece : m_pImpl->controller.getGame().getBoard().getPieces())
 			{
 				Chess::Model::Position position = pChessPiece->getPosition();
 
@@ -401,53 +438,94 @@ void ObjectDrawer::draw(unsigned char * imageData, glm::mat4 const& view)
 			}
 		}
 		{
-			std::vector<Chess::Model::Position> legalMoves = m_pImpl->board.getPiece(Chess::Model::Position(1, 2))->getLegalMoves(m_pImpl->board);
-
-			for (auto const& position : legalMoves)
+			std::shared_ptr<Chess::Model::Piece> pSelectedPiece = m_pImpl->controller.getSelectedPiece();
+			if (pSelectedPiece)
 			{
-				glm::mat4 model(1.0f);
-				model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.0f));
+				std::vector<Chess::Model::Position> legalMoves = pSelectedPiece->getLegalMoves(m_pImpl->controller.getGame().getBoard());
+				for (auto const& position : legalMoves)
+				{
+					glm::mat4 model(1.0f);
+					model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.0f));
 
-				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
-				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+					GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
+					glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
 
-				m_pImpl->pHighlightableSquare->draw();
+					m_pImpl->pHighlightableSquare->draw();
+				}
 			}
 		}
+	}
 
-		////Render axes
-		//{
-		//	//Leave axes at origin
-		//	glm::mat4 model(1.0f);
-		//	model = glm::scale(model, glm::vec3(3.0f, 3.0f, 3.0f));
+	//Render into ID image
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, m_pImpl->fbo);
+		glClear(GL_COLOR);
 
-		//	GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
-		//	glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+		glUseProgram(m_pImpl->idShaderProgram);
 
-		//	GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
-		//	glUniform1i(hasImageUniformLocation, false);
+		GLint viewUniformLocation = glGetUniformLocation(m_pImpl->idShaderProgram, "View");
+		glUniformMatrix4fv(viewUniformLocation, 1, GL_FALSE, &view[0][0]);
 
-		//	m_pImpl->pAxes->draw();
-		//}
+		GLint projectionUniformLocation = glGetUniformLocation(m_pImpl->idShaderProgram, "Projection");
+		glUniformMatrix4fv(projectionUniformLocation, 1, GL_FALSE, &m_pImpl->projection[0][0]);
 
-		//{
-		//	glBindTexture(GL_TEXTURE_2D, m_pImpl->tableTexture);
+		//TODO: board dimensions should come directly from the board
+		//for (int rank = 1; rank <= 8; ++rank)
+		for (auto const& positionColorPair : m_pImpl->positionColorMap)
+		{
+			//for (int file = 1; file <= 8; ++file)
+			{
+				glm::mat4 model(1.0f);
+				model = glm::translate(model, glm::vec3(positionColorPair.first.file, -positionColorPair.first.rank, 0.0f));
 
-		//	glm::mat4 model(1.0f);
-		//	model = glm::translate(model, glm::vec3(-0.08f, 0.08f, 0.0f));
+				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->idShaderProgram, "Model");
+				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
 
-		//	GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
-		//	glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+				glm::vec3 color(positionColorPair.second.r / 255.0f, positionColorPair.second.g / 255.0f, positionColorPair.second.b / 255.0f);
 
-		//	GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
-		//	glUniform1i(hasImageUniformLocation, true);
+				std::vector<Vertex> chessboardSquareVertices =
+				{
+					VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(color).build(),
+					VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(color).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(color).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(color).build()
+				};
+				auto square = std::make_shared<Quad>(chessboardSquareVertices);
 
-		//	m_pImpl->pTable->draw();
-
-		//	glBindTexture(GL_TEXTURE_2D, 0);
-		//}
+				square->draw();
+			}
+		}
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
 	//Read the image data back
 	glReadPixels(0, 0, m_pImpl->width, m_pImpl->height, GL_BGR, GL_UNSIGNED_BYTE, imageData);
+}
+
+std::optional<Chess::Model::Position> ObjectDrawer::handleClick(float x, float y)
+{
+	glBindFramebuffer(GL_FRAMEBUFFER, m_pImpl->fbo);
+
+	glm::u8vec3 color;
+	glReadPixels((GLint)(x*m_pImpl->width), (GLint)(y*m_pImpl->height), 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &color[0]);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	auto iter = std::find_if(
+		m_pImpl->colorPositionMap.cbegin(),
+		m_pImpl->colorPositionMap.cend(),
+		[color](std::pair<glm::u8vec3, Chess::Model::Position> const& pair)
+		{
+			return color == pair.first;
+		});
+
+	if (iter == m_pImpl->colorPositionMap.cend())
+	{
+		return std::nullopt;
+	}
+
+
+
+	//std::shared_ptr<Chess::Model::Piece> pSelectedPiece = m_pImpl->board.getPiece(iter->second);
+	return iter->second;
 }
