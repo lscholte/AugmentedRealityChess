@@ -28,7 +28,7 @@ void main()
 		vec3 L = normalize(FragmentWorldPosition.xyz - LightPosition);
 		vec3 N = normalize(FragmentNormal);
 
-		float ambient = 0.2;
+		float ambient = 0.8;
 		float diffuse = max(dot(L, N), 0.0);
 
 		color = color*ambient + color*diffuse*5;
