@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessArView", "ChessArView\ChessArView.vcxproj", "{3BA495D3-28B1-4292-96C8-EE5F413407F2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessArView", "Chess\src\ArView\ChessArView.vcxproj", "{3BA495D3-28B1-4292-96C8-EE5F413407F2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommunicationLayer", "CommunicationLayer\CommunicationLayer.vcxproj", "{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gui", "Gui\Gui.csproj", "{ACAB838D-B90B-4043-B666-54B2EBF5DBC8}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessModel", "ChessModel\ChessModel.vcxproj", "{B1D22166-171E-4D2C-90CA-E648F65A3B48}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessModel", "Chess\src\Model\ChessModel.vcxproj", "{B1D22166-171E-4D2C-90CA-E648F65A3B48}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessController", "ChessController\ChessController.vcxproj", "{1FAC8339-E5AC-4D91-9EE6-29CD3D10FB9C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessController", "Chess\src\Controller\ChessController.vcxproj", "{1FAC8339-E5AC-4D91-9EE6-29CD3D10FB9C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

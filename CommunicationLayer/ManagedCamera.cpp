@@ -6,7 +6,7 @@
 #include "ManagedCamera.h"
 
 #pragma managed(push, off)
-#include <Camera.h>
+#include <Chess\ArView\Camera.h>
 #pragma managed(pop)
 
 #include <msclr\marshal_cppstd.h>
