@@ -40,9 +40,14 @@ namespace Model
 
 		auto checkAndPushPosition = [isWhite = isWhite(), currentPosition, &legalPositions, &board](Position positionToCheck)
 		{
+			std::shared_ptr<Piece> pPiece = board.getPiece(positionToCheck);
 			if (board.isPositionLegal(isWhite, positionToCheck))
 			{
-				legalPositions.push_back(positionToCheck);
+				if ((pPiece && positionToCheck.file != currentPosition.file) ||
+					(!pPiece && positionToCheck.file == currentPosition.file))
+				{
+					legalPositions.push_back(positionToCheck);
+				}
 			}
 		};
 
@@ -51,22 +56,8 @@ namespace Model
 		if (isWhite())
 		{
 			checkAndPushPosition(Position(currentPosition.rank + 1, currentPosition.file));
-			{
-				Position positionToCheck(currentPosition.rank + 1, currentPosition.file + 1);
-				std::shared_ptr<Piece> pPiece = board.getPiece(positionToCheck);
-				if (pPiece)
-				{
-					checkAndPushPosition(positionToCheck);
-				}
-			}
-			{
-				Position positionToCheck(currentPosition.rank + 1, currentPosition.file - 1);
-				std::shared_ptr<Piece> pPiece = board.getPiece(positionToCheck);
-				if (pPiece)
-				{
-					checkAndPushPosition(positionToCheck);
-				}
-			}
+			checkAndPushPosition(Position(currentPosition.rank + 1, currentPosition.file + 1));
+			checkAndPushPosition(Position(currentPosition.rank + 1, currentPosition.file - 1));
 
 			//Pawn can move 2 squares forward on first move
 			//If there is nothing in the way
@@ -81,22 +72,8 @@ namespace Model
 		else
 		{
 			checkAndPushPosition(Position(currentPosition.rank - 1, currentPosition.file));
-			{
-				Position positionToCheck(currentPosition.rank - 1, currentPosition.file + 1);
-				std::shared_ptr<Piece> pPiece = board.getPiece(positionToCheck);
-				if (pPiece)
-				{
-					checkAndPushPosition(positionToCheck);
-				}
-			}
-			{
-				Position positionToCheck(currentPosition.rank - 1, currentPosition.file - 1);
-				std::shared_ptr<Piece> pPiece = board.getPiece(positionToCheck);
-				if (pPiece)
-				{
-					checkAndPushPosition(positionToCheck);
-				}
-			}
+			checkAndPushPosition(Position(currentPosition.rank - 1, currentPosition.file + 1));
+			checkAndPushPosition(Position(currentPosition.rank - 1, currentPosition.file - 1));
 
 			//Pawn can move 2 squares forward on first move
 			//If there is nothing in the way
