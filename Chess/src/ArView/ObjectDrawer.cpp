@@ -68,13 +68,12 @@ namespace ArView
 		std::vector<std::shared_ptr<DrawableObject>> blackQueen;
 		std::vector<std::shared_ptr<DrawableObject>> blackKing;
 
-		std::shared_ptr<DrawableObject> pAxes;
 		std::shared_ptr<DrawableObject> pQuad;
 
 		std::shared_ptr<DrawableObject> pHighlightableSquare;
 
-		std::shared_ptr<DrawableObject> pTable;
-		GLuint tableTexture;
+		std::shared_ptr<DrawableObject> pDrawableChessboard;
+		GLuint chessboardTexture;
 
 		Controller::Controller controller;
 
@@ -214,24 +213,22 @@ namespace ArView
 				VertexBuilder().addPosition(glm::vec3(0.0f, 0.0f, 1.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
 			};
 
-			pAxes = std::make_shared<LineSegments>(axesVertices);
 			pQuad = std::make_shared<Quad>();
-
 
 			std::vector<Vertex> quadVertices =
 			{
-				VertexBuilder().addPosition(glm::vec3(-1.0f, 1.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(10.0f, 1.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(-1.0f, -7.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 1.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(10.0f, -7.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 1.0f)).build()
+				VertexBuilder().addPosition(glm::vec3(0.0f, 0.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 0.0f)).build(),
+				VertexBuilder().addPosition(glm::vec3(8.0f, 0.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 0.0f)).build(),
+				VertexBuilder().addPosition(glm::vec3(0.0f, -8.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 1.0f)).build(),
+				VertexBuilder().addPosition(glm::vec3(8.0f, -8.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 1.0f)).build()
 			};
-			pTable = std::make_shared<Quad>(quadVertices);
+			pDrawableChessboard = std::make_shared<Quad>(quadVertices);
 
 			int imageWidth, imageHeight, nrComponents;
-			unsigned char* imageData = stbi_load("./assets/tabletop.jpeg", &imageWidth, &imageHeight, &nrComponents, 0);
+			unsigned char* imageData = stbi_load("./assets/chess/chessboard.png", &imageWidth, &imageHeight, &nrComponents, 0);
 
-			glGenTextures(1, &tableTexture);
-			glBindTexture(GL_TEXTURE_2D, tableTexture);
+			glGenTextures(1, &chessboardTexture);
+			glBindTexture(GL_TEXTURE_2D, chessboardTexture);
 			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageWidth, imageHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -413,6 +410,24 @@ namespace ArView
 			GLint projectionUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Projection");
 			glUniformMatrix4fv(projectionUniformLocation, 1, GL_FALSE, &m_pImpl->projection[0][0]);
 
+			//Render chessboard
+			{
+				glBindTexture(GL_TEXTURE_2D, m_pImpl->chessboardTexture);
+
+				glm::mat4 model(1.0f);
+				model = glm::translate(model, glm::vec3(0.5f, -0.5f, 0.0f));
+
+				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
+				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+
+				GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
+				glUniform1i(hasImageUniformLocation, true);
+
+				m_pImpl->pDrawableChessboard->draw();
+
+				glBindTexture(GL_TEXTURE_2D, 0);
+			}
+
 			//Render chess pieces
 			{
 				GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
@@ -453,7 +468,7 @@ namespace ArView
 					for (auto const& position : legalMoves)
 					{
 						glm::mat4 model(1.0f);
-						model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.0f));
+						model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.001f));
 
 						GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 						glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
