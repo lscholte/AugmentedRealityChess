@@ -77,10 +77,11 @@ namespace ArView
 
 		Controller::Controller controller;
 
+		//TODO: Replace with maps or a bidirectional map
 		std::vector<std::pair<glm::u8vec3, Model::Position>> colorPositionMap;
 		std::vector<std::pair<Model::Position, glm::u8vec3>> positionColorMap;
 
-		GLuint fbo;
+		GLuint idFramebuffer;
 
 		Impl(size_t width, size_t height, Controller::Controller const& controller)
 			: width(width)
@@ -249,8 +250,8 @@ namespace ArView
 
 			//Generate a framebuffer to render a texture to.
 			//This is used to render chess squares a particular color to ID them
-			glGenFramebuffers(1, &fbo);
-			glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+			glGenFramebuffers(1, &idFramebuffer);
+			glBindFramebuffer(GL_FRAMEBUFFER, idFramebuffer);
 			unsigned int texture;
 			glGenTextures(1, &texture);
 			glBindTexture(GL_TEXTURE_2D, texture);
@@ -462,7 +463,7 @@ namespace ArView
 
 		//Render into ID image
 		{
-			glBindFramebuffer(GL_FRAMEBUFFER, m_pImpl->fbo);
+			glBindFramebuffer(GL_FRAMEBUFFER, m_pImpl->idFramebuffer);
 			glClear(GL_COLOR);
 
 			glUseProgram(m_pImpl->idShaderProgram);
@@ -508,7 +509,7 @@ namespace ArView
 
 	std::optional<Model::Position> ObjectDrawer::handleClick(float x, float y)
 	{
-		glBindFramebuffer(GL_FRAMEBUFFER, m_pImpl->fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_pImpl->idFramebuffer);
 
 		glm::u8vec3 color;
 		glReadPixels((GLint)(x * m_pImpl->width), (GLint)(y * m_pImpl->height), 1, 1, GL_RGB, GL_UNSIGNED_BYTE, &color[0]);
