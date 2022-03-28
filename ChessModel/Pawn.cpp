@@ -46,19 +46,6 @@ namespace Model
 			}
 		};
 
-		//Pawn can move 2 squares forward on first move
-		if (m_pImpl->isFirstMove)
-		{
-			if (isWhite())
-			{
-				checkAndPushPosition(Position(currentPosition.rank + 2, currentPosition.file));
-			}
-			else
-			{
-				checkAndPushPosition(Position(currentPosition.rank - 2, currentPosition.file));
-			}
-		}
-
 		//Otherwise pawn can move 1 square forward
 		//or 1 square diagonally if an opposing piece is there for capture
 		if (isWhite())
@@ -80,6 +67,16 @@ namespace Model
 					checkAndPushPosition(positionToCheck);
 				}
 			}
+
+			//Pawn can move 2 squares forward on first move
+			//If there is nothing in the way
+			if (m_pImpl->isFirstMove)
+			{
+				if (!board.getPiece(Position(currentPosition.rank + 1, currentPosition.file)))
+				{
+					checkAndPushPosition(Position(currentPosition.rank + 2, currentPosition.file));
+				}
+			}
 		}
 		else
 		{
@@ -98,6 +95,16 @@ namespace Model
 				if (pPiece)
 				{
 					checkAndPushPosition(positionToCheck);
+				}
+			}
+
+			//Pawn can move 2 squares forward on first move
+			//If there is nothing in the way
+			if (m_pImpl->isFirstMove)
+			{
+				if (!board.getPiece(Position(currentPosition.rank - 1, currentPosition.file)))
+				{
+					checkAndPushPosition(Position(currentPosition.rank - 2, currentPosition.file));
 				}
 			}
 		}
