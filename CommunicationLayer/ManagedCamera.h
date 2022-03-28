@@ -6,7 +6,13 @@
 
 #using <PresentationCore.dll>
 
-class Camera;
+namespace Chess
+{
+namespace ArView
+{
+	class Camera;
+}
+}
 
 /// <summary>
 /// Provides a managed wrapper around a native C++ Camera, suitable for use in C#.
@@ -97,5 +103,5 @@ public:
 	void HandleRightClick();
 
 private:
-	Camera* m_pCamera;
+	Chess::ArView::Camera* m_pCamera;
 };

@@ -9,25 +9,31 @@
 
 #include <vector>
 
-/// <summary>
-/// A collection of line segments that can be drawn into a scene
-/// </summary>
-class LineSegments
-	: public DrawableObject
+namespace Chess
 {
-public:
-
+namespace ArView
+{
 	/// <summary>
-	/// Constructs LineSegments from a set of vertices.
+	/// A collection of line segments that can be drawn into a scene
 	/// </summary>
-	/// <param name="vertices"></param>
-	LineSegments(std::vector<Vertex> const& vertices);
+	class LineSegments
+		: public DrawableObject
+	{
+	public:
 
-	virtual ~LineSegments();
+		/// <summary>
+		/// Constructs LineSegments from a set of vertices.
+		/// </summary>
+		/// <param name="vertices"></param>
+		LineSegments(std::vector<Vertex> const& vertices);
 
-	virtual void draw() const override;
+		virtual ~LineSegments();
 
-private:
-	std::vector<Vertex> m_vertices;
-	unsigned int m_vertexArrayObject, m_vertexBufferObject;
-};
+		virtual void draw() const override;
+
+	private:
+		std::vector<Vertex> m_vertices;
+		unsigned int m_vertexArrayObject, m_vertexBufferObject;
+	};
+}
+}

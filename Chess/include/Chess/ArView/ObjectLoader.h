@@ -12,24 +12,30 @@
 #include <vector>
 #include <memory>
 
-/// <summary>
-/// A loader for various graphical file formats into
-/// representations suitable for rendering.
-/// </summary>
-class ObjectLoader
+namespace Chess
 {
-public:
-	virtual ~ObjectLoader();
-
+namespace ArView
+{
 	/// <summary>
-	/// Reads a file into a vector of DrawableObjects.
+	/// A loader for various graphical file formats into
+	/// representations suitable for rendering.
 	/// </summary>
-	/// <param name="filePath">The path to a file to read</param>
-	/// <param name="meshes">The resulting vector of DrawableObjects</param>
-	/// <param name="color">The color to assign the vertices</param>
-	/// <returns>True if the object loaded successfully, false otherwise</returns>
-	bool load(
-		std::string const& filePath,
-		std::vector<std::shared_ptr<DrawableObject>>& whiteKnight,
-		glm::vec3 const& color);
-};
+	class ObjectLoader
+	{
+	public:
+		virtual ~ObjectLoader();
+
+		/// <summary>
+		/// Reads a file into a vector of DrawableObjects.
+		/// </summary>
+		/// <param name="filePath">The path to a file to read</param>
+		/// <param name="meshes">The resulting vector of DrawableObjects</param>
+		/// <param name="color">The color to assign the vertices</param>
+		/// <returns>True if the object loaded successfully, false otherwise</returns>
+		bool load(
+			std::string const& filePath,
+			std::vector<std::shared_ptr<DrawableObject>>& whiteKnight,
+			glm::vec3 const& color);
+	};
+}
+}

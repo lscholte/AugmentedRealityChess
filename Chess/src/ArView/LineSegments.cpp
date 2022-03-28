@@ -8,32 +8,38 @@
 
 #include <gl/glew.h>
 
-LineSegments::LineSegments(std::vector<Vertex> const& vertices)
-	: m_vertices(vertices)
+namespace Chess
 {
-	glGenVertexArrays(1, &m_vertexArrayObject);
-	glGenBuffers(1, &m_vertexBufferObject);
+namespace ArView
+{
+	LineSegments::LineSegments(std::vector<Vertex> const& vertices)
+		: m_vertices(vertices)
+	{
+		glGenVertexArrays(1, &m_vertexArrayObject);
+		glGenBuffers(1, &m_vertexBufferObject);
 
-	glBindVertexArray(m_vertexArrayObject);
-	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObject);
+		glBindVertexArray(m_vertexArrayObject);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObject);
 
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
 
-	glEnableVertexAttribArray(GLSL_POSITION_LOCATION);
-	glVertexAttribPointer(GLSL_POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
+		glEnableVertexAttribArray(GLSL_POSITION_LOCATION);
+		glVertexAttribPointer(GLSL_POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
 
-	glEnableVertexAttribArray(GLSL_COLOR_LOCATION);
-	glVertexAttribPointer(GLSL_COLOR_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+		glEnableVertexAttribArray(GLSL_COLOR_LOCATION);
+		glVertexAttribPointer(GLSL_COLOR_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
 
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
+		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBindVertexArray(0);
+	}
+
+	LineSegments::~LineSegments() = default;
+
+	void LineSegments::draw() const
+	{
+		glBindVertexArray(m_vertexArrayObject);
+		glDrawArrays(GL_LINES, 0, m_vertices.size());
+		glBindVertexArray(0);
+	}
 }
-
-LineSegments::~LineSegments() = default;
-
-void LineSegments::draw() const
-{
-	glBindVertexArray(m_vertexArrayObject);
-	glDrawArrays(GL_LINES, 0, m_vertices.size());
-	glBindVertexArray(0);
 }

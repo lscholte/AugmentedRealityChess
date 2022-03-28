@@ -16,14 +16,14 @@
 
 namespace
 {
-	std::shared_ptr<DrawableObject> processMesh(aiMesh* pMesh, const aiScene* pScene, glm::vec3 const& color)
+	std::shared_ptr<Chess::ArView::DrawableObject> processMesh(aiMesh* pMesh, const aiScene* pScene, glm::vec3 const& color)
 	{
-		std::vector<Vertex> vertices;
+		std::vector<Chess::ArView::Vertex> vertices;
 		std::vector<unsigned int> indices;
 
 		for (unsigned int i = 0; i < pMesh->mNumVertices; ++i)
 		{
-			Vertex vertex;
+			Chess::ArView::Vertex vertex;
 			aiVector3D position = pMesh->mVertices[i];
 			vertex.position = glm::vec3(position.x, position.y, position.z);
 
@@ -45,10 +45,10 @@ namespace
 				indices.push_back(face.mIndices[j]);
 			}
 		}
-		return std::make_shared<TriangleMesh>(vertices, indices);
+		return std::make_shared<Chess::ArView::TriangleMesh>(vertices, indices);
 	}
 
-	void processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<DrawableObject>>& whiteKnight, glm::vec3 const& color)
+	void processNode(aiNode* node, const aiScene* scene, std::vector<std::shared_ptr<Chess::ArView::DrawableObject>>& whiteKnight, glm::vec3 const& color)
 	{
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
@@ -62,23 +62,30 @@ namespace
 	}
 }
 
-ObjectLoader::~ObjectLoader() = default;
-
-//https://learnopengl.com/Model-Loading/Assimp
-bool ObjectLoader::load(
-	std::string const& filePath,
-	std::vector<std::shared_ptr<DrawableObject>>& whiteKnight,
-	glm::vec3 const& color)
+namespace Chess
 {
-	Assimp::Importer importer;
-	aiScene const * pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenNormals);
-	if (!pScene)
+namespace ArView
+{
+	ObjectLoader::~ObjectLoader() = default;
+
+	//https://learnopengl.com/Model-Loading/Assimp
+	bool ObjectLoader::load(
+		std::string const& filePath,
+		std::vector<std::shared_ptr<DrawableObject>>&whiteKnight,
+		glm::vec3 const& color)
 	{
-		return false;
+		Assimp::Importer importer;
+		aiScene const* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenNormals);
+		if (!pScene)
+		{
+			return false;
+		}
+
+		whiteKnight.clear();
+		processNode(pScene->mRootNode, pScene, whiteKnight, color);
+
+		return true;
 	}
 
-	whiteKnight.clear();
-	processNode(pScene->mRootNode, pScene, whiteKnight, color);
-
-	return true;
+}
 }

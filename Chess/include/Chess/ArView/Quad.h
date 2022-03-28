@@ -9,21 +9,27 @@
 
 #include <vector>
 
-/// <summary>
-/// A quad that can be rendered over the entire image space.
-/// </summary>
-class Quad
-	: public DrawableObject
+namespace Chess
 {
-public:
-	Quad();
-	Quad(std::vector<Vertex> const& vertices);
+namespace ArView
+{
+	/// <summary>
+	/// A quad that can be rendered over the entire image space.
+	/// </summary>
+	class Quad
+		: public DrawableObject
+	{
+	public:
+		Quad();
+		Quad(std::vector<Vertex> const& vertices);
 
-	virtual ~Quad();
+		virtual ~Quad();
 
-	virtual void draw() const override;
+		virtual void draw() const override;
 
-private:
-	std::vector<Vertex> m_vertices;
-	unsigned int m_vertexArrayObject, m_vertexBufferObject;
-};
+	private:
+		std::vector<Vertex> m_vertices;
+		unsigned int m_vertexArrayObject, m_vertexBufferObject;
+	};
+}
+}

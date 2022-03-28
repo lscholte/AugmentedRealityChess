@@ -7,37 +7,44 @@
 
 #include <glm/ext.hpp>
 
-VertexBuilder::VertexBuilder()
-	: m_vertex()
-{}
 
-VertexBuilder::~VertexBuilder() = default;
-
-VertexBuilder& VertexBuilder::addPosition(glm::vec3 const& position)
+namespace Chess
 {
-	m_vertex.position = position;
-	return *this;
+namespace ArView
+{
+	VertexBuilder::VertexBuilder()
+		: m_vertex()
+	{}
+
+	VertexBuilder::~VertexBuilder() = default;
+
+	VertexBuilder& VertexBuilder::addPosition(glm::vec3 const& position)
+	{
+		m_vertex.position = position;
+		return *this;
+	}
+
+	VertexBuilder& VertexBuilder::addColor(glm::vec3 const& color)
+	{
+		m_vertex.color = color;
+		return *this;
+	}
+
+	VertexBuilder& VertexBuilder::addNormal(glm::vec3 const& normal)
+	{
+		m_vertex.normal = normal;
+		return *this;
+	}
+
+	VertexBuilder& VertexBuilder::addTextureCoord(glm::vec2 const& textureCoord)
+	{
+		m_vertex.textureCoord = textureCoord;
+		return *this;
+	}
+
+	Vertex VertexBuilder::build()
+	{
+		return m_vertex;
+	}
 }
-
-VertexBuilder& VertexBuilder::addColor(glm::vec3 const& color)
-{
-	m_vertex.color = color;
-	return *this;
-}
-
-VertexBuilder& VertexBuilder::addNormal(glm::vec3 const& normal)
-{
-	m_vertex.normal = normal;
-	return *this;
-}
-
-VertexBuilder& VertexBuilder::addTextureCoord(glm::vec2 const& textureCoord)
-{
-	m_vertex.textureCoord = textureCoord;
-	return *this;
-}
-
-Vertex VertexBuilder::build()
-{
-	return m_vertex;
 }

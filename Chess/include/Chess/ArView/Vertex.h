@@ -6,13 +6,20 @@
 
 #include <glm/ext.hpp>
 
-/// <summary>
-/// Represents a Vertex that can be sent to a shader in OpenGL
-/// </summary>
-struct Vertex
+namespace Chess
 {
-	glm::vec3 position;
-	glm::vec3 color;
-	glm::vec3 normal;
-	glm::vec2 textureCoord;
-};
+namespace ArView
+{
+	/// <summary>
+	/// Represents a Vertex that can be sent to a shader in OpenGL
+	/// </summary>
+	struct Vertex
+	{
+		glm::vec3 position;
+		glm::vec3 color;
+		glm::vec3 normal;
+		glm::vec2 textureCoord;
+	};
+
+}
+}

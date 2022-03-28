@@ -14,7 +14,7 @@
 #using <WindowsBase.dll>
 
 ManagedCamera::ManagedCamera()
-	: m_pCamera(new Camera())
+	: m_pCamera(new Chess::ArView::Camera())
 {
 }
 

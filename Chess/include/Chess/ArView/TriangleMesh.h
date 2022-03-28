@@ -9,24 +9,30 @@
 
 #include <vector>
 
-/// <summary>
-/// Represents a triangle mesh, typically one that might be loaded from a file.
-/// </summary>
-class TriangleMesh
-	: public DrawableObject
+namespace Chess
 {
-public:
+namespace ArView
+{
+	/// <summary>
+	/// Represents a triangle mesh, typically one that might be loaded from a file.
+	/// </summary>
+	class TriangleMesh
+		: public DrawableObject
+	{
+	public:
 
-	TriangleMesh(
-		std::vector<Vertex> const& vertices,
-		std::vector<unsigned int> const& indices);
+		TriangleMesh(
+			std::vector<Vertex> const& vertices,
+			std::vector<unsigned int> const& indices);
 
-	virtual ~TriangleMesh();
+		virtual ~TriangleMesh();
 
-	virtual void draw() const override;
+		virtual void draw() const override;
 
-private:
-	std::vector<Vertex> m_vertices;
-	std::vector<unsigned int> m_indices;
-	unsigned int m_vertexArrayObject, m_vertexBufferObject, m_elementBufferObject;
-};
+	private:
+		std::vector<Vertex> m_vertices;
+		std::vector<unsigned int> m_indices;
+		unsigned int m_vertexArrayObject, m_vertexBufferObject, m_elementBufferObject;
+	};
+}
+}

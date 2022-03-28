@@ -4,17 +4,23 @@
 
 #pragma once
 
-/// <summary>
-/// An arbitrary object that can be drawn in a scene.
-/// </summary>
-class DrawableObject
+namespace Chess
 {
-public:
-	virtual ~DrawableObject() = default;
-
+namespace ArView
+{
 	/// <summary>
-	/// Draws this object onto the scene.
+	/// An arbitrary object that can be drawn in a scene.
 	/// </summary>
-	virtual void draw() const = 0;
+	class DrawableObject
+	{
+	public:
+		virtual ~DrawableObject() = default;
 
-};
+		/// <summary>
+		/// Draws this object onto the scene.
+		/// </summary>
+		virtual void draw() const = 0;
+
+	};
+}
+}
