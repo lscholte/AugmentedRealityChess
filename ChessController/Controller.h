@@ -30,8 +30,7 @@ namespace Controller
 		std::shared_ptr<Model::Piece> getSelectedPiece() const;
 
 		void selectPosition(Model::Position position);
-
-		bool moveSelectedPiece(Model::Position position);
+		void unselectPosition();
 
 	private:
 		struct Impl;

@@ -107,7 +107,9 @@ public:
 	/// <returns>The reprojection error if the camera is calibrated, NaN otherwise</returns>
 	double getReprojectionError() const;
 
-	void handleClick(float x, float y);
+	void handleLeftClick(float x, float y);
+
+	void handleRightClick();
 
 private:
 	struct Impl;

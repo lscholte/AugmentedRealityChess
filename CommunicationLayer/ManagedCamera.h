@@ -92,7 +92,9 @@ public:
 	/// <returns>The reprojection error if the camera is calibrated, NaN otherwise</returns>
 	double GetReprojectionError();
 
-	void HandleClick(float x, float y);
+	void HandleLeftClick(float x, float y);
+
+	void HandleRightClick();
 
 private:
 	Camera* m_pCamera;

@@ -49,24 +49,19 @@ namespace Controller
 		}
 		else
 		{
-			moveSelectedPiece(position);
+			//Move the piece
+			bool moveSuccessful = m_pImpl->game.move(m_pImpl->pSelectedPiece->getPosition(), position);
+			if (moveSuccessful)
+			{
+				m_pImpl->pSelectedPiece = nullptr;
+				return;
+			}
 		}
 	}
 
-	bool Controller::moveSelectedPiece(Model::Position position)
+	void Controller::unselectPosition()
 	{
-		if (!m_pImpl->pSelectedPiece)
-		{
-			return false;
-		}
-
-		bool moveSuccessful = m_pImpl->game.move(m_pImpl->pSelectedPiece->getPosition(), position);
-		if (moveSuccessful)
-		{
-			m_pImpl->pSelectedPiece = nullptr;
-			return true;
-		}
-		return false;
+		m_pImpl->pSelectedPiece = nullptr;
 	}
 }
 }

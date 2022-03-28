@@ -440,7 +440,7 @@ double Camera::getReprojectionError() const
 	return m_pImpl->reprojectionError;
 }
 
-void Camera::handleClick(float x, float y)
+void Camera::handleLeftClick(float x, float y)
 {
 	std::scoped_lock lock(m_pImpl->mutex);
 	std::optional<Chess::Model::Position> oPosition = m_pImpl->objectDrawer.handleClick(x, y);
@@ -449,4 +449,10 @@ void Camera::handleClick(float x, float y)
 	{
 		m_pImpl->controller.selectPosition(*oPosition);
 	}
+}
+
+void Camera::handleRightClick()
+{
+	std::scoped_lock lock(m_pImpl->mutex);
+	m_pImpl->controller.unselectPosition();
 }

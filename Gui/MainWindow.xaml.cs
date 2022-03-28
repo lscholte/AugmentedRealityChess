@@ -33,13 +33,18 @@ namespace Gui
             DataContext = null;
         }
 
-        public void OnImageClick(object sender, MouseEventArgs args)
+        public void OnImageLeftClick(object sender, MouseEventArgs args)
         {
             Point p = args.GetPosition(Image);
             p.X /= Image.ActualWidth;
             p.Y /= Image.ActualHeight;
 
-            (DataContext as ViewModel)?.HandleClick(p);
+            (DataContext as ViewModel)?.HandleLeftClick(p);
+        }
+
+        public void OnImageRightClick(object sender, MouseEventArgs args)
+        {
+            (DataContext as ViewModel)?.HandleRightClick();
         }
     }
 }

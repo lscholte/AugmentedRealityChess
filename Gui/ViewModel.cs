@@ -102,9 +102,14 @@ namespace Gui
             ReprojectionError = m_camera.GetReprojectionError();
         });
 
-        public void HandleClick(Point point)
+        public void HandleLeftClick(Point point)
         {
-            m_camera.HandleClick((float)point.X, (float)point.Y);
+            m_camera.HandleLeftClick((float)point.X, (float)point.Y);
+        }
+
+        public void HandleRightClick()
+        {
+            m_camera.HandleRightClick();
         }
 
         #endregion

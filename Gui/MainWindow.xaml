@@ -80,7 +80,7 @@
         </StackPanel>
 
         <Border Width="640">
-            <Image Name="Image" Source="{Binding Image}" MouseLeftButtonDown="OnImageClick"/>
+            <Image Name="Image" Source="{Binding Image}" MouseLeftButtonDown="OnImageLeftClick" MouseRightButtonDown="OnImageRightClick"/>
         </Border>
     </StackPanel>
 </Window>
