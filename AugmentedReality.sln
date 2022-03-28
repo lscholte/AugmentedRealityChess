@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.32112.339
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AugmentedReality", "AugmentedReality\AugmentedReality.vcxproj", "{3BA495D3-28B1-4292-96C8-EE5F413407F2}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ChessArView", "ChessArView\ChessArView.vcxproj", "{3BA495D3-28B1-4292-96C8-EE5F413407F2}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CommunicationLayer", "CommunicationLayer\CommunicationLayer.vcxproj", "{EE5EF4AB-894C-4B20-B030-C5AEB9A8DE9F}"
 EndProject

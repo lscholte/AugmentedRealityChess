@@ -97,7 +97,7 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{3ba495d3-28b1-4292-96c8-ee5f413407f2}</ProjectGuid>
-    <RootNamespace>AugmentedReality</RootNamespace>
+    <RootNamespace>ChessArView</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
