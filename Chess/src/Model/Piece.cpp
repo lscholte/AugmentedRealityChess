@@ -5,6 +5,7 @@
 
 #include <Chess/Model/Piece.h>
 #include <Chess/Model/Position.h>
+#include <Chess/Model/Board.h>
 
 namespace Chess
 {
@@ -37,7 +38,7 @@ namespace Model
 		return m_pImpl->position;
 	}
 
-	bool Piece::move(Board const& board, Position newPosition)
+	bool Piece::move(Board& board, Position newPosition)
 	{
 		//TODO: Calculations would have likely already been previously calculated.
 		//I can probably eliminate this repeated calculation with some clever caching
@@ -55,8 +56,19 @@ namespace Model
 			return false;
 		}
 
+		std::shared_ptr<Piece> pExistingPiece = board.getPiece(newPosition);
+		if (pExistingPiece)
+		{
+			board.removePiece(pExistingPiece);
+		}
+
 		m_pImpl->position = newPosition;
 		return true;
+	}
+
+	bool Piece::isUnderAttack(Board const& board) const
+	{
+		return false;
 	}
 }
 }

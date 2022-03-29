@@ -6,7 +6,7 @@
 
 #include <Chess/Macros.h>
 
-#include <vector>
+#include <unordered_set>
 #include <memory>
 
 namespace Chess
@@ -25,7 +25,8 @@ namespace Model
 
 		Size getSize() const;
 
-		std::vector<std::shared_ptr<Piece>> const& getPieces() const;
+		std::unordered_set<std::shared_ptr<Piece>> const& getPieces() const;
+		std::unordered_set<std::shared_ptr<Piece>> const& getPieces(bool isWhite) const;
 
 		/// <summary>
 		/// Gets the piece at the specified position.
@@ -33,6 +34,8 @@ namespace Model
 		/// <param name="position">The position to search for a piece</param>
 		/// <returns>The piece at the position or nullptr if no piece exists</returns>
 		std::shared_ptr<Piece> getPiece(Position position) const;
+
+		bool removePiece(std::shared_ptr<Piece> pPiece);
 
 		bool isPositionOnBoard(Position position) const;
 		bool isPositionLegal(bool isWhite, Position position) const;

@@ -23,7 +23,7 @@ namespace Model
 
 		virtual std::vector<Position> getLegalMoves(Board const& board) const override;
 
-		virtual bool move(Board const& board, Position newPosition) override;
+		virtual bool move(Board& board, Position newPosition) override;
 
 	private:
 		struct Impl;

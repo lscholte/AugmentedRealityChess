@@ -14,6 +14,7 @@
 #include <Chess/Model/Size.h>
 
 #include <memory>
+#include <unordered_set>
 
 namespace Chess
 {
@@ -21,47 +22,53 @@ namespace Model
 {
 	struct Board::Impl
 	{
-		std::vector<std::shared_ptr<Piece>> pieces;
+		std::unordered_set<std::shared_ptr<Piece>> pieces;
+		std::unordered_set<std::shared_ptr<Piece>> whitePieces;
+		std::unordered_set<std::shared_ptr<Piece>> blackPieces;
+
 
 		Impl()
 		{			
 			//White
-			pieces.push_back(std::make_shared<Rook>(true,	Position(1, 1)));
-			pieces.push_back(std::make_shared<Knight>(true, Position(1, 2)));
-			pieces.push_back(std::make_shared<Bishop>(true, Position(1, 3)));
-			pieces.push_back(std::make_shared<Queen>(true,	Position(1, 4)));
-			pieces.push_back(std::make_shared<King>(true,	Position(1, 5)));
-			pieces.push_back(std::make_shared<Bishop>(true, Position(1, 6)));
-			pieces.push_back(std::make_shared<Knight>(true, Position(1, 7)));
-			pieces.push_back(std::make_shared<Rook>(true,	Position(1, 8)));
+			whitePieces.emplace(std::make_shared<Rook>(true,	Position(1, 1)));
+			whitePieces.emplace(std::make_shared<Knight>(true, Position(1, 2)));
+			whitePieces.emplace(std::make_shared<Bishop>(true, Position(1, 3)));
+			whitePieces.emplace(std::make_shared<Queen>(true,	Position(1, 4)));
+			whitePieces.emplace(std::make_shared<King>(true,	Position(1, 5)));
+			whitePieces.emplace(std::make_shared<Bishop>(true, Position(1, 6)));
+			whitePieces.emplace(std::make_shared<Knight>(true, Position(1, 7)));
+			whitePieces.emplace(std::make_shared<Rook>(true,	Position(1, 8)));
 
-			pieces.push_back(std::make_shared<Pawn>(true, Position(2, 1)));
-			pieces.push_back(std::make_shared<Pawn>(true, Position(2, 2)));
-			pieces.push_back(std::make_shared<Pawn>(true, Position(2, 3)));
-			pieces.push_back(std::make_shared<Pawn>(true, Position(2, 4)));
-			pieces.push_back(std::make_shared<Pawn>(true, Position(2, 5)));
-			pieces.push_back(std::make_shared<Pawn>(true, Position(2, 6)));
-			pieces.push_back(std::make_shared<Pawn>(true, Position(2, 7)));
-			pieces.push_back(std::make_shared<Pawn>(true, Position(2, 8)));
+			whitePieces.emplace(std::make_shared<Pawn>(true, Position(2, 1)));
+			whitePieces.emplace(std::make_shared<Pawn>(true, Position(2, 2)));
+			whitePieces.emplace(std::make_shared<Pawn>(true, Position(2, 3)));
+			whitePieces.emplace(std::make_shared<Pawn>(true, Position(2, 4)));
+			whitePieces.emplace(std::make_shared<Pawn>(true, Position(2, 5)));
+			whitePieces.emplace(std::make_shared<Pawn>(true, Position(2, 6)));
+			whitePieces.emplace(std::make_shared<Pawn>(true, Position(2, 7)));
+			whitePieces.emplace(std::make_shared<Pawn>(true, Position(2, 8)));
 
 			//Black
-			pieces.push_back(std::make_shared<Rook>(false,		Position(8, 1)));
-			pieces.push_back(std::make_shared<Knight>(false,	Position(8, 2)));
-			pieces.push_back(std::make_shared<Bishop>(false,	Position(8, 3)));
-			pieces.push_back(std::make_shared<Queen>(false,		Position(8, 4)));
-			pieces.push_back(std::make_shared<King>(false,		Position(8, 5)));
-			pieces.push_back(std::make_shared<Bishop>(false,	Position(8, 6)));
-			pieces.push_back(std::make_shared<Knight>(false,	Position(8, 7)));
-			pieces.push_back(std::make_shared<Rook>(false,		Position(8, 8)));
+			blackPieces.emplace(std::make_shared<Rook>(false,		Position(8, 1)));
+			blackPieces.emplace(std::make_shared<Knight>(false,	Position(8, 2)));
+			blackPieces.emplace(std::make_shared<Bishop>(false,	Position(8, 3)));
+			blackPieces.emplace(std::make_shared<Queen>(false,		Position(8, 4)));
+			blackPieces.emplace(std::make_shared<King>(false,		Position(8, 5)));
+			blackPieces.emplace(std::make_shared<Bishop>(false,	Position(8, 6)));
+			blackPieces.emplace(std::make_shared<Knight>(false,	Position(8, 7)));
+			blackPieces.emplace(std::make_shared<Rook>(false,		Position(8, 8)));
 
-			pieces.push_back(std::make_shared<Pawn>(false, Position(7, 1)));
-			pieces.push_back(std::make_shared<Pawn>(false, Position(7, 2)));
-			pieces.push_back(std::make_shared<Pawn>(false, Position(7, 3)));
-			pieces.push_back(std::make_shared<Pawn>(false, Position(7, 4)));
-			pieces.push_back(std::make_shared<Pawn>(false, Position(7, 5)));
-			pieces.push_back(std::make_shared<Pawn>(false, Position(7, 6)));
-			pieces.push_back(std::make_shared<Pawn>(false, Position(7, 7)));
-			pieces.push_back(std::make_shared<Pawn>(false, Position(7, 8)));
+			blackPieces.emplace(std::make_shared<Pawn>(false, Position(7, 1)));
+			blackPieces.emplace(std::make_shared<Pawn>(false, Position(7, 2)));
+			blackPieces.emplace(std::make_shared<Pawn>(false, Position(7, 3)));
+			blackPieces.emplace(std::make_shared<Pawn>(false, Position(7, 4)));
+			blackPieces.emplace(std::make_shared<Pawn>(false, Position(7, 5)));
+			blackPieces.emplace(std::make_shared<Pawn>(false, Position(7, 6)));
+			blackPieces.emplace(std::make_shared<Pawn>(false, Position(7, 7)));
+			blackPieces.emplace(std::make_shared<Pawn>(false, Position(7, 8)));
+
+			pieces.insert(whitePieces.cbegin(), whitePieces.cend());
+			pieces.insert(blackPieces.cbegin(), blackPieces.cend());
 		}
 	};
 
@@ -76,9 +83,14 @@ namespace Model
 		return Size(8, 8);
 	}
 
-	std::vector<std::shared_ptr<Piece>> const& Board::getPieces() const
+	std::unordered_set<std::shared_ptr<Piece>> const& Board::getPieces() const
 	{
 		return m_pImpl->pieces;
+	}
+
+	std::unordered_set<std::shared_ptr<Piece>> const& Board::getPieces(bool isWhite) const
+	{
+		return isWhite ? m_pImpl->whitePieces : m_pImpl->blackPieces;
 	}
 
 	std::shared_ptr<Piece> Board::getPiece(Position position) const
@@ -94,6 +106,19 @@ namespace Model
 		return iter == m_pImpl->pieces.cend()
 			? nullptr
 			: *iter;
+	}
+
+	bool Board::removePiece(std::shared_ptr<Piece> pPiece)
+	{
+		if (pPiece->isWhite())
+		{
+			m_pImpl->whitePieces.erase(pPiece);
+		}
+		else
+		{
+			m_pImpl->blackPieces.erase(pPiece);
+		}
+		return m_pImpl->pieces.erase(pPiece) > 0;
 	}
 
 	bool Board::isPositionOnBoard(Position position) const

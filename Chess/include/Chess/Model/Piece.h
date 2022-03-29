@@ -32,7 +32,7 @@ namespace Model
 		virtual bool isWhite() const;
 		virtual Position getPosition() const;
 
-		virtual bool move(Board const& board, Position newPosition);
+		virtual bool move(Board& board, Position newPosition);
 
 		/// <summary>
 		/// Gets the positions that a piece may legally move to.
@@ -41,6 +41,8 @@ namespace Model
 		/// <param name="board">The board containing all other pieces</param>
 		/// <returns>A vector of legal positions this piece can move to in no particular order</returns>
 		virtual std::vector<Position> getLegalMoves(Board const& board) const = 0;
+
+		virtual bool isUnderAttack(Board const& board) const;
 
 	private:
 		struct Impl;

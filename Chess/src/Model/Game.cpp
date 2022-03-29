@@ -69,7 +69,7 @@ namespace Model
 			return false;
 		}
 
-		pPiece->move(getBoard(), newPosition);
+		pPiece->move(m_pImpl->board, newPosition);
 		m_pImpl->isWhiteMove = !m_pImpl->isWhiteMove;
 
 		return true;
