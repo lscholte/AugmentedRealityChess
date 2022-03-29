@@ -68,7 +68,38 @@ namespace Model
 
 	bool Piece::isUnderAttack(Board const& board) const
 	{
+		for (std::shared_ptr<Piece> pOppositeColorPiece : board.getPieces(!isWhite()))
+		{
+			std::vector<Position> attackingPositions = pOppositeColorPiece->getAttackingPositions(board);
+			auto iter = std::find_if(
+				attackingPositions.cbegin(),
+				attackingPositions.cend(),
+				[currentPosition = getPosition()](Position position)
+			{
+				return position == currentPosition;
+			});
+			
+			if (iter != attackingPositions.cend())
+			{
+				//This piece sits in a square that is threatened by an opposing piece
+				return true;
+			}
+		}
 		return false;
+	}
+
+	std::vector<Position> Piece::getLegalMoves(Board const& board) const
+	{
+		std::vector<Position> legalPositions;
+
+		for (Position position : getAttackingPositions(board))
+		{
+			if (board.isPositionLegal(isWhite(), position))
+			{
+				legalPositions.push_back(position);
+			}
+		}
+		return legalPositions;
 	}
 }
 }

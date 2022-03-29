@@ -21,7 +21,7 @@ namespace Model
 
 		virtual PieceType getType() const override;
 
-		virtual std::vector<Position> getLegalMoves(Board const& board) const override;
+		virtual std::vector<Position> getAttackingPositions(Board const& board) const override;
 
 		virtual bool move(Board& board, Position newPosition) override;
 

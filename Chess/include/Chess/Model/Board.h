@@ -38,6 +38,7 @@ namespace Model
 		bool removePiece(std::shared_ptr<Piece> pPiece);
 
 		bool isPositionOnBoard(Position position) const;
+		bool isPositionPossible(bool isWhite, Position position) const;
 		bool isPositionLegal(bool isWhite, Position position) const;
 
 	private:

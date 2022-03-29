@@ -22,17 +22,17 @@ namespace Model
 		return PieceType::Rook;
 	}
 
-	std::vector<Position> Rook::getLegalMoves(Board const& board) const
+	std::vector<Position> Rook::getAttackingPositions(Board const& board) const
 	{
-		std::vector<Position> legalPositions;
+		std::vector<Position> attackingPositions;
 
 		Position currentPosition = getPosition();
 
-		auto checkAndPushPosition = [isWhite = isWhite(), currentPosition, &legalPositions, &board](Position positionToCheck)
+		auto checkAndPushPosition = [isWhite = isWhite(), currentPosition, &attackingPositions, &board](Position positionToCheck)
 		{
-			if (board.isPositionLegal(isWhite, positionToCheck))
+			if (board.isPositionPossible(isWhite, positionToCheck))
 			{
-				legalPositions.push_back(positionToCheck);
+				attackingPositions.push_back(positionToCheck);
 			}
 		};
 
@@ -76,7 +76,7 @@ namespace Model
 			} while (!board.getPiece(positionToCheck) && board.isPositionOnBoard(positionToCheck));
 		}
 
-		return legalPositions;
+		return attackingPositions;
 	}
 }
 }

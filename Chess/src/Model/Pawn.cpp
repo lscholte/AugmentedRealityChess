@@ -32,21 +32,21 @@ namespace Model
 		return PieceType::Pawn;
 	}
 
-	std::vector<Position> Pawn::getLegalMoves(Board const& board) const
+	std::vector<Position> Pawn::getAttackingPositions(Board const& board) const
 	{
-		std::vector<Position> legalPositions;
+		std::vector<Position> attackingPositions;
 
 		Position currentPosition = getPosition();
 
-		auto checkAndPushPosition = [isWhite = isWhite(), currentPosition, &legalPositions, &board](Position positionToCheck)
+		auto checkAndPushPosition = [isWhite = isWhite(), currentPosition, &attackingPositions, &board](Position positionToCheck)
 		{
 			std::shared_ptr<Piece> pPiece = board.getPiece(positionToCheck);
-			if (board.isPositionLegal(isWhite, positionToCheck))
+			if (board.isPositionPossible(isWhite, positionToCheck))
 			{
 				if ((pPiece && positionToCheck.file != currentPosition.file) ||
 					(!pPiece && positionToCheck.file == currentPosition.file))
 				{
-					legalPositions.push_back(positionToCheck);
+					attackingPositions.push_back(positionToCheck);
 				}
 			}
 		};
@@ -88,7 +88,7 @@ namespace Model
 
 		//TODO: There is also en passant move (ignore this for now)
 
-		return legalPositions;
+		return attackingPositions;
 	}
 
 	bool Pawn::move(Board& board, Position newPosition)
