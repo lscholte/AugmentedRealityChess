@@ -17,8 +17,8 @@ namespace Model
 
 		Position(unsigned char rank, unsigned char file);
 
-		bool operator==(Position other);
-		bool operator!=(Position other);
+		bool operator==(Position other) const;
+		bool operator!=(Position other) const;
 	};
 }
 }

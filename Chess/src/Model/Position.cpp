@@ -16,12 +16,12 @@ namespace Model
 		, file(file)
 	{}
 
-	bool Position::operator==(Position other)
+	bool Position::operator==(Position other) const
 	{
 		return rank == other.rank && file == other.file;
 	}
 
-	bool Position::operator!=(Position other)
+	bool Position::operator!=(Position other) const
 	{
 		return !(*this == other);
 	}
