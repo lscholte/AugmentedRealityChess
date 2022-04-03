@@ -17,7 +17,10 @@ namespace Model
 	{
 	public:
 		Pawn(bool isWhite, Position position);
+		Pawn(Pawn const& otherPawn);
 		virtual ~Pawn();
+
+		virtual std::shared_ptr<Piece> clone() const override;
 
 		virtual PieceType getType() const override;
 

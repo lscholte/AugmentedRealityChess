@@ -72,11 +72,40 @@ namespace Model
 			pieces.insert(whitePieces.cbegin(), whitePieces.cend());
 			pieces.insert(blackPieces.cbegin(), blackPieces.cend());
 		}
+
+		Impl(Impl const& otherImpl)
+		{
+			for (std::shared_ptr<Piece> const& pPiece : otherImpl.whitePieces)
+			{
+				std::shared_ptr<Piece> pCopiedPiece = *whitePieces.insert(pPiece->clone()).first;
+				if (pCopiedPiece->getType() == PieceType::King)
+				{
+					pWhiteKing = pCopiedPiece;
+				}
+			}
+
+			for (std::shared_ptr<Piece> const& pPiece : otherImpl.blackPieces)
+			{
+				std::shared_ptr<Piece> pCopiedPiece = *blackPieces.insert(pPiece->clone()).first;
+				if (pCopiedPiece->getType() == PieceType::King)
+				{
+					pBlackKing = pCopiedPiece;
+				}
+			}
+
+			pieces.insert(whitePieces.cbegin(), whitePieces.cend());
+			pieces.insert(blackPieces.cbegin(), blackPieces.cend());
+		}
 	};
 
 	Board::Board()
 		: m_pImpl(std::make_shared<Impl>())
 	{}
+
+	Board::Board(Board const& otherBoard)
+		: m_pImpl(std::make_shared<Impl>(*otherBoard.m_pImpl))
+	{
+	}
 
 	Board::~Board() = default;
 
@@ -159,19 +188,13 @@ namespace Model
 		return true;
 	}
 
-	bool Board::isPositionLegal(bool isWhite, Position position) const
+	bool Board::isKingInCheck(bool isWhite) const
 	{
-		if (!isPositionPossible(isWhite, position))
-		{
-			return false;
-		}
-
-		//TODO: Determine if the king is in check.
-		//It is important that this take into account the
-		//state of the board after trying to make a move rather
-		//than the state of the board before attempting the move.
-
-		return true;
+		return isWhite
+			? m_pImpl->pWhiteKing->isUnderAttack(*this)
+			: m_pImpl->pBlackKing->isUnderAttack(*this);
 	}
+
+
 }
 }

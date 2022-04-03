@@ -15,7 +15,10 @@ namespace Model
 	{
 	public:
 		Knight(bool isWhite, Position position);
+		Knight(Knight const& otherKnight);
 		virtual ~Knight();
+
+		virtual std::shared_ptr<Piece> clone() const override;
 
 		virtual PieceType getType() const override;
 

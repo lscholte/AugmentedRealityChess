@@ -15,7 +15,10 @@ namespace Model
 	{
 	public:
 		Bishop(bool isWhite, Position position);
+		Bishop(Bishop const& otherBishop);
 		virtual ~Bishop();
+
+		virtual std::shared_ptr<Piece> clone() const override;
 
 		virtual PieceType getType() const override;
 

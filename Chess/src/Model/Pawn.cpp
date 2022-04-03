@@ -18,6 +18,10 @@ namespace Model
 		Impl()
 			: isFirstMove(true)
 		{}
+
+		Impl(Impl const& otherImpl)
+			: isFirstMove(otherImpl.isFirstMove)
+		{}
 	};
 
 	Pawn::Pawn(bool isWhite, Position position)
@@ -25,7 +29,17 @@ namespace Model
 		, m_pImpl(std::make_shared<Impl>())
 	{}
 
+	Pawn::Pawn(Pawn const& otherPawn)
+		: Piece(otherPawn)
+		, m_pImpl(std::make_shared<Impl>(*otherPawn.m_pImpl))
+	{}
+
 	Pawn::~Pawn() = default;
+
+	std::shared_ptr<Piece> Pawn::clone() const
+	{
+		return std::make_shared<Pawn>(*this);
+	}
 
 	PieceType Pawn::getType() const
 	{

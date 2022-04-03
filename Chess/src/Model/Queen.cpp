@@ -15,7 +15,16 @@ namespace Model
 		: Piece(isWhite, position)
 	{}
 
+	Queen::Queen(Queen const& otherQueen)
+		: Piece(otherQueen)
+	{}
+
 	Queen::~Queen() = default;
+
+	std::shared_ptr<Piece> Queen::clone() const
+	{
+		return std::make_shared<Queen>(*this);
+	}
 
 	PieceType Queen::getType() const
 	{

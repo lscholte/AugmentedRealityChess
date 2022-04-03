@@ -20,10 +20,25 @@ namespace Model
 			: isWhite(isWhite)
 			, position(position)
 		{}
+
+		void moveWithoutChecking(Board& board, Position newPosition)
+		{
+			std::shared_ptr<Piece> pExistingPiece = board.getPiece(newPosition);
+			if (pExistingPiece)
+			{
+				board.removePiece(pExistingPiece);
+			}
+
+			position = newPosition;
+		}
 	};
 
 	Piece::Piece(bool isWhite, Position position)
 		: m_pImpl(std::make_shared<Impl>(isWhite, position))
+	{}
+
+	Piece::Piece(Piece const& otherPiece)
+		: Piece(otherPiece.isWhite(), otherPiece.getPosition())
 	{}
 
 	Piece::~Piece() = default;
@@ -56,13 +71,7 @@ namespace Model
 			return false;
 		}
 
-		std::shared_ptr<Piece> pExistingPiece = board.getPiece(newPosition);
-		if (pExistingPiece)
-		{
-			board.removePiece(pExistingPiece);
-		}
-
-		m_pImpl->position = newPosition;
+		m_pImpl->moveWithoutChecking(board, newPosition);
 		return true;
 	}
 
@@ -91,14 +100,20 @@ namespace Model
 	std::vector<Position> Piece::getLegalMoves(Board const& board) const
 	{
 		std::vector<Position> legalPositions;
-
 		for (Position position : getAttackingPositions(board))
 		{
-			if (board.isPositionLegal(isWhite(), position))
+			//On a separate copy of the board, try moving the piece
+			//and then check if it puts the player's own King in check.
+			//Use a copied board to avoid corrupting the state of the game.
+			Board copiedBoard(board);
+			std::shared_ptr<Piece> pCopiedPiece = copiedBoard.getPiece(getPosition());
+			pCopiedPiece->m_pImpl->moveWithoutChecking(copiedBoard, position);
+			if (!copiedBoard.isKingInCheck(isWhite()))
 			{
 				legalPositions.push_back(position);
 			}
 		}
+
 		return legalPositions;
 	}
 }

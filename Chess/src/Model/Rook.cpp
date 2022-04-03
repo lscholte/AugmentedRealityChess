@@ -15,7 +15,16 @@ namespace Model
 		: Piece(isWhite, position)
 	{}
 
+	Rook::Rook(Rook const& otherRook)
+		: Piece(otherRook)
+	{}
+
 	Rook::~Rook() = default;
+
+	std::shared_ptr<Piece> Rook::clone() const
+	{
+		return std::make_shared<Rook>(*this);
+	}
 
 	PieceType Rook::getType() const
 	{

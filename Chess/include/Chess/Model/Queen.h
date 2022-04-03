@@ -15,7 +15,10 @@ namespace Model
 	{
 	public:
 		Queen(bool isWhite, Position position);
+		Queen(Queen const& otherQueen);
 		virtual ~Queen();
+
+		virtual std::shared_ptr<Piece> clone() const override;
 
 		virtual PieceType getType() const override;
 

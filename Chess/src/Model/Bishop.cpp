@@ -15,7 +15,16 @@ namespace Model
 		: Piece(isWhite, position)
 	{}
 
+	Bishop::Bishop(Bishop const& otherBishop)
+		: Piece(otherBishop)
+	{}
+
 	Bishop::~Bishop() = default;
+
+	std::shared_ptr<Piece> Bishop::clone() const
+	{
+		return std::make_shared<Bishop>(*this);
+	}
 
 	PieceType Bishop::getType() const
 	{

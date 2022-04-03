@@ -25,7 +25,10 @@ namespace Model
 	{
 	public:
 		Piece(bool isWhite, Position position);
+		Piece(Piece const& otherPiece);
 		virtual ~Piece();
+
+		virtual std::shared_ptr<Piece> clone() const = 0;
 
 		virtual PieceType getType() const = 0;
 

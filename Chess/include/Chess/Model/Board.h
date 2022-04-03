@@ -20,7 +20,19 @@ namespace Model
 	class EXPORT Board
 	{
 	public:
+
+		/// <summary>
+		/// Constructs a board with pieces in their appropriate
+		/// starting positions for white and black
+		/// </summary>
 		Board();
+
+		/// <summary>
+		/// Constructs a board from a deep copy of an existing board
+		/// </summary>
+		/// <param name="otherBoard">The existing board to deep copy</param>
+		Board(Board const& otherBoard);
+
 		virtual ~Board();
 
 		Size getSize() const;
@@ -39,7 +51,8 @@ namespace Model
 
 		bool isPositionOnBoard(Position position) const;
 		bool isPositionPossible(bool isWhite, Position position) const;
-		bool isPositionLegal(bool isWhite, Position position) const;
+		bool isKingInCheck(bool isWhite) const;
+
 
 	private:
 		struct Impl;

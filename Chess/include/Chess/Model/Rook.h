@@ -15,7 +15,10 @@ namespace Model
 	{
 	public:
 		Rook(bool isWhite, Position position);
+		Rook(Rook const& otherRook);
 		virtual ~Rook();
+
+		virtual std::shared_ptr<Piece> clone() const override;
 
 		virtual PieceType getType() const override;
 

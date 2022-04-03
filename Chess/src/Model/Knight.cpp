@@ -15,7 +15,16 @@ namespace Model
 		: Piece(isWhite, position)
 	{}
 
+	Knight::Knight(Knight const& otherKnight)
+		: Piece(otherKnight)
+	{}
+
 	Knight::~Knight() = default;
+
+	std::shared_ptr<Piece> Knight::clone() const
+	{
+		return std::make_shared<Knight>(*this);
+	}
 
 	PieceType Knight::getType() const
 	{
