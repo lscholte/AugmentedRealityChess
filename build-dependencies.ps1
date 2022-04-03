@@ -1,5 +1,5 @@
 param(
-	[ValidateSet("Release", "Debug")][String[]]$BuildConfigurations="Release,Debug"
+	[ValidateSet("Release", "Debug")][String[]]$BuildConfigurations=@("Release","Debug")
 )
 
 foreach ($BuildConfiguration in $BuildConfigurations) {
