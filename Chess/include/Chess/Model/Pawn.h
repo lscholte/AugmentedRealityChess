@@ -12,12 +12,26 @@ namespace Chess
 {
 namespace Model
 {
+	/// <summary>
+	/// A pawn chess piece that can be placed on a board.
+	/// </summary>
 	class Pawn
 		: public Piece
 	{
 	public:
+		/// <summary>
+		/// Constructs a pawn in a position.
+		/// </summary>
+		/// <param name="isWhite">Whether the pawn is white or black</param>
+		/// <param name="position">The position of the pawn</param>
 		Pawn(bool isWhite, Position position);
+
+		/// <summary>
+		/// Constructs a deep copy of another pawn.
+		/// </summary>
+		/// <param name="otherPiece">The other pawn to copy</param>
 		Pawn(Pawn const& otherPawn);
+
 		virtual ~Pawn();
 
 		virtual std::shared_ptr<Piece> clone() const override;
