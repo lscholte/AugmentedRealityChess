@@ -13,6 +13,7 @@ namespace Chess
 {
 namespace Model
 {
+	enum class PieceType;
 	class Piece;
 	struct Position;
 	struct Size;
@@ -70,6 +71,16 @@ namespace Model
 		/// <param name="pPiece">The piece to remove</param>
 		/// <returns>True if the piece was removed, false otherwise</returns>
 		bool removePiece(std::shared_ptr<Piece> pPiece);
+
+		/// <summary>
+		/// Promotes the specified piece to a piece of a particular type.
+		/// If the piece can be promoted, it will be removed from the board and
+		/// replaced with a new piece of the specified promotion type.
+		/// </summary>
+		/// <param name="pPieceToPromote">The piece to promote</param>
+		/// <param name="promotionType">The type of piece to promote to</param>
+		/// <returns>The newly promoted piece or an empty pointer if promotion did not occur</returns>
+		std::shared_ptr<Piece> promotePiece(std::shared_ptr<Piece> pPieceToPromote, PieceType promotionType);
 
 		/// <summary>
 		/// Determines if a specified position is on the board.

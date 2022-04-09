@@ -6,6 +6,7 @@
 #include <Chess/Model/Pawn.h>
 #include <Chess/Model/Board.h>
 #include <Chess/Model/Position.h>
+#include <Chess/Model/Size.h>
 
 namespace Chess
 {
@@ -112,6 +113,14 @@ namespace Model
 		if (isMoveSuccessful)
 		{
 			m_pImpl->isFirstMove = false;
+
+			//If pawn has moved to the other side of the board, then promote it
+			if ((isWhite() && newPosition.rank == board.getSize().ranks) ||
+				(!isWhite() && newPosition.rank == 1))
+			{
+				//TODO: Need to allow for promotion to piece's other than Queen
+				board.promotePiece(shared_from_this(), PieceType::Queen);
+			}
 		}
 		return isMoveSuccessful;
 	}

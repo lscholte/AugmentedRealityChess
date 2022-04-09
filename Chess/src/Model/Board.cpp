@@ -152,6 +152,11 @@ namespace Model
 		return m_pImpl->pieces.erase(pPiece) > 0;
 	}
 
+	std::shared_ptr<Piece> Board::promotePiece(std::shared_ptr<Piece> pPieceToPromote, PieceType promotionType)
+	{
+		return nullptr;
+	}
+
 	bool Board::isPositionOnBoard(Position position) const
 	{
 		if (position.rank < 1 ||

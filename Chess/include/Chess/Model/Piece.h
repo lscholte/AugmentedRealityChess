@@ -27,7 +27,7 @@ namespace Model
 	/// <summary>
 	/// An abstract chess piece that can be placed on a board.
 	/// </summary>
-	class EXPORT Piece
+	class EXPORT Piece : public std::enable_shared_from_this<Piece>
 	{
 	public:
 		/// <summary>
