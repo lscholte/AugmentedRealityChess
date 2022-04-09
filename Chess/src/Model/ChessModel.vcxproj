@@ -175,6 +175,10 @@
       <SubType>
       </SubType>
     </ClCompile>
+    <ClCompile Include="PieceFactory.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
     <ClCompile Include="Position.cpp" />
     <ClCompile Include="Queen.cpp">
       <SubType>
@@ -219,6 +223,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="..\..\include\Chess\Model\PieceFactory.h" />
     <ClInclude Include="..\..\include\Chess\Model\Position.h">
       <SubType>
       </SubType>
