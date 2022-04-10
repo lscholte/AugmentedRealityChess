@@ -70,7 +70,8 @@ namespace ArView
 
 		std::shared_ptr<DrawableObject> pQuad;
 
-		std::shared_ptr<DrawableObject> pHighlightableSquare;
+		std::shared_ptr<DrawableObject> pLegalMoveSquare;
+		std::shared_ptr<DrawableObject> pSelectedPieceSquare;
 
 		std::shared_ptr<DrawableObject> pDrawableChessboard;
 		GLuint chessboardTexture;
@@ -193,14 +194,27 @@ namespace ArView
 				}
 			}
 
-			std::vector<Vertex> chessboardSquareVertices =
 			{
-				VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build()
-			};
-			pHighlightableSquare = std::make_shared<Quad>(chessboardSquareVertices);
+				std::vector<Vertex> chessboardSquareVertices =
+				{
+					VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
+					VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build()
+				};
+				pLegalMoveSquare = std::make_shared<Quad>(chessboardSquareVertices);
+			}
+
+			{
+				std::vector<Vertex> chessboardSquareVertices =
+				{
+					VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
+					VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build()
+				};
+				pSelectedPieceSquare = std::make_shared<Quad>(chessboardSquareVertices);
+			}
 
 			//Create Axis vertices with particular positions and color
 			std::vector<Vertex> axesVertices
@@ -473,7 +487,17 @@ namespace ArView
 						GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 						glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
 
-						m_pImpl->pHighlightableSquare->draw();
+						m_pImpl->pLegalMoveSquare->draw();
+					}
+					{
+						Model::Position position = pSelectedPiece->getPosition();
+						glm::mat4 model(1.0f);
+						model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.001f));
+
+						GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
+						glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
+
+						m_pImpl->pSelectedPieceSquare->draw();
 					}
 				}
 			}
