@@ -38,7 +38,6 @@ void main()
 		float diffuse = max(dot(L, N), 0.0);
 		vec3 diffuseIllumination = diffuse * LightColor;
 		
-		float specular = 0.0;
 		vec3 specularIllumination = vec3(0.0, 0.0, 0.0);
 		if (diffuse > 0)
 		{
