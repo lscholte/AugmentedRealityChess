@@ -41,7 +41,7 @@ namespace ArView
 		/// </summary>
 		/// <param name="imageData">The image data in BGR format to draw onto, which will be modified</param>
 		/// <param name="view">Transformation matrix corresponding to the camera's intrinsic and extrinsic parameters</param>
-		void draw(unsigned char* imageData, glm::mat4 const& view);
+		void draw(unsigned char* imageData, glm::mat4 const& view, glm::vec3 const& cameraPosition);
 
 		std::optional<Model::Position> handleClick(float x, float y);
 

@@ -175,9 +175,16 @@ namespace ArView
 				rvec,
 				tvec);
 
-			glm::mat4 extrinsic;
-			std::memcpy(glm::value_ptr(extrinsic), cv::Affine3(rvec, tvec).matrix.val, 16 * sizeof(float));
-			extrinsic = glm::transpose(extrinsic);
+			glm::mat4 extrinsic, extrinsicTranspose;
+			std::memcpy(glm::value_ptr(extrinsicTranspose), cv::Affine3(rvec, tvec).matrix.val, 16 * sizeof(float));
+
+			//This seems backwards, but it is not.
+			//The reason for this is that a GLM matrix is in column major order rather than row major
+			extrinsic = glm::transpose(extrinsicTranspose);
+
+			glm::mat3 inverseRotation = -glm::mat3(extrinsicTranspose);
+			glm::vec3 translation(extrinsic[3]);
+			glm::vec3 cameraPosition = inverseRotation * translation;
 
 			float f = m_pImpl->cameraMatrix.at<double>(0, 0);
 			float cx = m_pImpl->cameraMatrix.at<double>(0, 2);
@@ -208,7 +215,7 @@ namespace ArView
 			intrinsic[3][3] = 0.0;
 
 			//Draw AR objects into the scene. This will draw xyz axes and a teapot.
-			m_pImpl->objectDrawer.draw(image.data, intrinsic * extrinsic);
+			m_pImpl->objectDrawer.draw(image.data, intrinsic * extrinsic, cameraPosition);
 		}
 
 		//Copy and return the image data

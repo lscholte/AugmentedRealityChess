@@ -391,7 +391,7 @@ namespace ArView
 
 	ObjectDrawer::~ObjectDrawer() = default;
 
-	void ObjectDrawer::draw(unsigned char* imageData, glm::mat4 const& view)
+	void ObjectDrawer::draw(unsigned char* imageData, glm::mat4 const& view, glm::vec3 const& cameraPosition)
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
@@ -429,6 +429,9 @@ namespace ArView
 			GLint projectionUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Projection");
 			glUniformMatrix4fv(projectionUniformLocation, 1, GL_FALSE, &m_pImpl->projection[0][0]);
 
+			GLint cameraPositionUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "CameraWorldPosition");
+			glUniform3fv(cameraPositionUniformLocation, 1, glm::value_ptr(cameraPosition));
+			
 			//Render chessboard
 			{
 				glBindTexture(GL_TEXTURE_2D, m_pImpl->chessboardTexture);
