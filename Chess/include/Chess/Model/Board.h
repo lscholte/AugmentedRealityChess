@@ -5,6 +5,7 @@
 #pragma once
 
 #include <Chess/Macros.h>
+#include <Chess/Model/FwdDecl.h>
 
 #include <unordered_set>
 #include <memory>
@@ -13,11 +14,6 @@ namespace Chess
 {
 namespace Model
 {
-	enum class PieceType;
-	class Piece;
-	struct Position;
-	struct Size;
-
 	/// <summary>
 	/// Represents an 8x8 chessboard that can hold various chess pieces.
 	/// </summary>

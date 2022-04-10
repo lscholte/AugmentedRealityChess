@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <Chess/Model/FwdDecl.h>
+
 #include <glm/ext.hpp>
 
 #include <memory>
@@ -11,10 +13,6 @@
 
 namespace Chess
 {
-namespace Model
-{
-	struct Position;
-}
 namespace Controller
 {
 	class Controller;

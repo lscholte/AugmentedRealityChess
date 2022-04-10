@@ -5,6 +5,7 @@
 #pragma once
 
 #include <Chess/Macros.h>
+#include <Chess/Model/FwdDecl.h>
 
 #include <memory>
 
@@ -12,9 +13,6 @@ namespace Chess
 {
 namespace Model
 {
-	class Board;
-	struct Position;
-
 	class EXPORT Game
 	{
 	public:

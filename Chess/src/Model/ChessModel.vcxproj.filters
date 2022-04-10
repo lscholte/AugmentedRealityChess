@@ -92,5 +92,8 @@
     <ClInclude Include="..\..\include\Chess\Model\PieceFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\include\Chess\Model\FwdDecl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

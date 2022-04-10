@@ -5,18 +5,12 @@
 #pragma once
 
 #include <Chess/Macros.h>
+#include <Chess/Model/FwdDecl.h>
 
 #include <memory>
 
 namespace Chess
 {
-namespace Model
-{
-	class Game;
-	class Piece;
-	struct Position;
-}
-
 namespace Controller
 {
 	class EXPORT Controller

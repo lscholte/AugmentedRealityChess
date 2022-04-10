@@ -5,6 +5,7 @@
 #pragma once
 
 #include <Chess/Macros.h>
+#include <Chess/Model/FwdDecl.h>
 
 #include <vector>
 #include <memory>
@@ -13,9 +14,6 @@ namespace Chess
 {
 namespace Model
 {
-	class Board;
-	struct Position;
-
 	/// <summary>
 	/// Represents possible types of chess pieces.
 	/// </summary>

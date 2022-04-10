@@ -4,16 +4,14 @@
 
 #pragma once
 
+#include <Chess/Model/FwdDecl.h>
+
 #include <memory>
 
 namespace Chess
 {
 namespace Model
 {
-	class Piece;
-	enum class PieceType;
-	struct Position;
-
 	/// <summary>
 	/// A factory class that creates chess pieces.
 	/// </summary>
