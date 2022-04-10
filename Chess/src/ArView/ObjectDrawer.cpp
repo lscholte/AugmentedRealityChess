@@ -104,8 +104,8 @@ namespace ArView
 
 			projection = generateProjectionMatrix();
 
-			//Black Chess Pieces
-			glm::vec3 whiteColor(1.0f, 0.95f, 0.84f);
+			//White Chess Pieces
+			glm::vec3 whiteColor(0.90f, 0.80f, 0.60f);
 			{
 				bool result = ObjectLoader().load("./assets/chess/pawn.stl", whitePawn, whiteColor);
 				if (!result)
@@ -150,7 +150,7 @@ namespace ArView
 			}
 
 			//Black Chess Pieces
-			glm::vec3 blackColor(0.1f, 0.1f, 0.1f);
+			glm::vec3 blackColor(0.3f, 0.2f, 0.17f);
 			{
 				bool result = ObjectLoader().load("./assets/chess/pawn.stl", blackPawn, blackColor);
 				if (!result)
