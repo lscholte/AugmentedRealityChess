@@ -35,11 +35,18 @@ namespace ArView
 		VertexBuilder& addPosition(glm::vec3 const& position);
 
 		/// <summary>
-		/// Adds a color to the vertex.
+		/// Adds an RGB color to the vertex.
 		/// </summary>
 		/// <param name="color">The color to add</param>
 		/// <returns>This builder object</returns>
 		VertexBuilder& addColor(glm::vec3 const& color);
+
+		/// <summary>
+		/// Adds an RGBA color to the vertex.
+		/// </summary>
+		/// <param name="color">The color to add</param>
+		/// <returns>This builder object</returns>
+		VertexBuilder& addColor(glm::vec4 const& color);
 
 		/// <summary>
 		/// Adds a normal to the vertex.

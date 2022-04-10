@@ -26,6 +26,12 @@ namespace ArView
 
 	VertexBuilder& VertexBuilder::addColor(glm::vec3 const& color)
 	{
+		m_vertex.color = glm::vec4(color, 1.0f);
+		return *this;
+	}
+
+	VertexBuilder& VertexBuilder::addColor(glm::vec4 const& color)
+	{
 		m_vertex.color = color;
 		return *this;
 	}

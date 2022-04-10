@@ -1,10 +1,10 @@
 #version 330 core
 layout (location = 0) in vec3 Position;
-layout (location = 1) in vec3 Color;
+layout (location = 1) in vec4 Color;
 layout (location = 2) in vec3 Normal;
 layout (location = 3) in vec2 TextureCoord;
 
-out vec3 FragmentColor;
+out vec4 FragmentColor;
 out vec4 FragmentWorldPosition;
 out vec3 FragmentNormal;
 out vec2 FragmentTextureCoord;

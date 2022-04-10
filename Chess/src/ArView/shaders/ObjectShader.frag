@@ -1,6 +1,6 @@
 #version 330 core
 
-in vec3 FragmentColor;
+in vec4 FragmentColor;
 in vec4 FragmentWorldPosition;
 in vec3 FragmentNormal;
 in vec2 FragmentTextureCoord;
@@ -12,10 +12,10 @@ uniform sampler2D Image;
 
 void main()
 {	
-	vec3 color;
+	vec4 color;
 	if (HasImage)
 	{
-		color = texture(Image, FragmentTextureCoord).rgb;
+		color = texture(Image, FragmentTextureCoord);
 	}
 	else
 	{
@@ -31,7 +31,7 @@ void main()
 		float ambient = 0.5;
 		float diffuse = max(dot(L, N), 0.0);
 
-		color = color*ambient + color*diffuse;
+		color.rgb = color.rgb*ambient + color.rgb*diffuse;
 	}
-	FragColor = vec4(color, 1.0);
+	FragColor = color;
 }

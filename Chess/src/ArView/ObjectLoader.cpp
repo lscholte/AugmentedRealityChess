@@ -5,6 +5,7 @@
 
 #include <Chess/ArView/ObjectLoader.h>
 #include <Chess/ArView/Vertex.h>
+#include <Chess/ArView/VertexBuilder.h>
 #include <Chess/ArView/DrawableObject.h>
 #include <Chess/ArView/TriangleMesh.h>
 
@@ -23,19 +24,20 @@ namespace
 
 		for (unsigned int i = 0; i < pMesh->mNumVertices; ++i)
 		{
-			Chess::ArView::Vertex vertex;
+			Chess::ArView::VertexBuilder vertexBuilder;
+
 			aiVector3D position = pMesh->mVertices[i];
-			vertex.position = glm::vec3(position.x, position.y, position.z);
+			vertexBuilder.addPosition(glm::vec3(position.x, position.y, position.z));
 
 			aiVector3D normal = pMesh->mNormals[i];
-			vertex.normal = glm::vec3(normal.x, normal.y, normal.z);
+			vertexBuilder.addNormal(glm::vec3(normal.x, normal.y, normal.z));
 
 			//Setting a hardcoded color
 			//is basically a lazy placeholder for not trying
 			//to load textures.
-			vertex.color = color;
+			vertexBuilder.addColor(color);
 
-			vertices.push_back(std::move(vertex));
+			vertices.push_back(vertexBuilder.build());
 		}
 		for (unsigned int i = 0; i < pMesh->mNumFaces; ++i)
 		{

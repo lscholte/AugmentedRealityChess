@@ -195,23 +195,25 @@ namespace ArView
 			}
 
 			{
+				glm::vec4 highlightColor(0.0f, 1.0f, 0.0f, 0.5f);
 				std::vector<Vertex> chessboardSquareVertices =
 				{
-					VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
-					VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
-					VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
-					VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build()
+					VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(highlightColor).build(),
+					VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(highlightColor).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(highlightColor).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(highlightColor).build()
 				};
 				pLegalMoveSquare = std::make_shared<Quad>(chessboardSquareVertices);
 			}
 
 			{
+				glm::vec4 highlightColor(0.0f, 0.0f, 1.0f, 0.5f);
 				std::vector<Vertex> chessboardSquareVertices =
 				{
-					VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
-					VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
-					VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
-					VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build()
+					VertexBuilder().addPosition(glm::vec3(-0.5f, -0.5f, 0.0f)).addColor(highlightColor).build(),
+					VertexBuilder().addPosition(glm::vec3(-0.5f, 0.5f, 0.0f)).addColor(highlightColor).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, -0.5f, 0.0f)).addColor(highlightColor).build(),
+					VertexBuilder().addPosition(glm::vec3(0.5f, 0.5f, 0.0f)).addColor(highlightColor).build()
 				};
 				pSelectedPieceSquare = std::make_shared<Quad>(chessboardSquareVertices);
 			}
@@ -414,6 +416,9 @@ namespace ArView
 
 		glEnable(GL_DEPTH_TEST);
 
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glEnable(GL_BLEND);
+
 		//Render virtual objects onto scene
 		{
 			glUseProgram(m_pImpl->objectShaderProgram);
@@ -502,6 +507,8 @@ namespace ArView
 				}
 			}
 		}
+
+		glDisable(GL_BLEND);
 
 		//Render into ID image
 		{

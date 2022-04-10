@@ -34,9 +34,8 @@ namespace ArView
 		glEnableVertexAttribArray(GLSL_POSITION_LOCATION);
 		glVertexAttribPointer(GLSL_POSITION_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, position));
 
-		// vertex normals as colors
 		glEnableVertexAttribArray(GLSL_COLOR_LOCATION);
-		glVertexAttribPointer(GLSL_COLOR_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
+		glVertexAttribPointer(GLSL_COLOR_LOCATION, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, color));
 
 		glEnableVertexAttribArray(GLSL_NORMAL_LOCATION);
 		glVertexAttribPointer(GLSL_NORMAL_LOCATION, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
