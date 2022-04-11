@@ -17,7 +17,8 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/calib3d.hpp>
-#pragma warning(pop) 
+#include <opencv2/aruco/charuco.hpp>
+#pragma warning(pop)
 
 #include <glm/ext.hpp>
 
@@ -37,7 +38,7 @@ namespace
 
 	int constexpr minCalibrationImages = 5;
 
-	cv::Size const checkerboardSize(9, 6);
+	cv::Size const checkerboardSize(7, 7);
 
 	WorldCoordinateList generateWorldCoordinates()
 	{
@@ -46,7 +47,8 @@ namespace
 		{
 			for (int x = 0; x < checkerboardSize.width; ++x)
 			{
-				worldCoordinateList.emplace_back(x+1.5f, -(y+1.5f), 0.0f);
+				//worldCoordinateList.emplace_back(x+1.5f, -(y+1.5f), 0.0f);
+				worldCoordinateList.emplace_back(x+1.5f, y+1.5f, 0.0f);
 			}
 		}
 
@@ -83,6 +85,9 @@ namespace ArView
 
 		ObjectDrawer objectDrawer;
 
+		cv::Ptr<cv::aruco::Dictionary> dictionary;
+		cv::Ptr<cv::aruco::CharucoBoard> board;
+
 		Impl()
 			: videoCapture(0)
 			, cornersOrdered(false)
@@ -90,6 +95,11 @@ namespace ArView
 			, objectDrawer(imageSize.width, imageSize.height, controller)
 		{
 			resetCalibration();
+
+			dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_250);
+			board = cv::aruco::CharucoBoard::create(8, 8, 1.0f, 0.8f, dictionary);
+			board->chessboardCorners = generateWorldCoordinates();
+
 		}
 
 		bool canSaveCalibrationImage()
@@ -136,40 +146,52 @@ namespace ArView
 		cv::Mat image;
 		m_pImpl->videoCapture >> image;
 
-		//Finds the chessboard corners. This is unfortunately a very expensive operation.
-		//CALIB_CB_FAST_CHECK seems to help with that, but it is still expensive
-		m_pImpl->cornersOrdered = cv::findChessboardCorners(image, checkerboardSize, m_pImpl->checkerboardCorners, cv::CALIB_CB_FAST_CHECK);
-		if (m_pImpl->cornersOrdered)
+		cv::Ptr<cv::aruco::DetectorParameters> params = cv::aruco::DetectorParameters::create();
+		std::vector<int> markerIds;
+		std::vector<ImageCoordinateList> markerCorners;
+		std::vector<cv::Point2f> charucoCorners;
+		std::vector<int> charucoIds;
+		cv::aruco::detectMarkers(image, m_pImpl->dictionary, markerCorners, markerIds, params);
+
+		if (!markerCorners.empty())
 		{
-			cv::Mat temp;
-			cv::cvtColor(image, temp, cv::COLOR_BGR2GRAY);
-			cv::cornerSubPix(temp, m_pImpl->checkerboardCorners, cv::Size(11, 11), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30, 0.001));
+			//cv::Mat temp;
+			//cv::cvtColor(image, temp, cv::COLOR_BGR2GRAY);
+			//for (auto& points : markerCorners)
+			//{
+			//	cv::cornerSubPix(temp, points, cv::Size(11, 11), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30, 0.001));
+			//}
+
+			cv::aruco::interpolateCornersCharuco(markerCorners, markerIds, image, m_pImpl->board, charucoCorners, charucoIds);
 		}
 
 		if (showCalibrationInfo)
 		{
-			cv::drawChessboardCorners(image, checkerboardSize, m_pImpl->checkerboardCorners, m_pImpl->cornersOrdered);
+			cv::aruco::drawDetectedMarkers(image, markerCorners, markerIds);
+			if (!charucoCorners.empty())
+			{
+				cv::aruco::drawDetectedCornersCharuco(image, charucoCorners, charucoIds);
+			}
 		}
 
-		if (m_pImpl->isCalibrated)
-		{
-			//Undistortion is needed such that the OpenGL objects get drawn in the right place
-			//because the transformation math is implemented myself rather than via cv::projectPoints.
-			//This is unfortunately also an expensive operation. It may be worth investigating
-			//how I could handle image distortion in OpenGL
-			cv::Mat modified;
-			cv::undistort(image, modified, m_pImpl->cameraMatrix, m_pImpl->distortionCoefficients);
-			image = modified;
-		}
+		//if (m_pImpl->isCalibrated)
+		//{
+		//	//Undistortion is needed such that the OpenGL objects get drawn in the right place
+		//	//because the transformation math is implemented myself rather than via cv::projectPoints.
+		//	//This is unfortunately also an expensive operation. It may be worth investigating
+		//	//how I could handle image distortion in OpenGL
+		//	cv::Mat modified;
+		//	cv::undistort(image, modified, m_pImpl->cameraMatrix, m_pImpl->distortionCoefficients);
+		//	image = modified;
+		//}
 
-		if (m_pImpl->isCalibrated && m_pImpl->canSaveCalibrationImage())
+		if (m_pImpl->isCalibrated && !charucoCorners.empty())
 		{
-			WorldCoordinateList worldCoordinateList = generateWorldCoordinates();
-
 			cv::Vec3f rvec, tvec;
-			cv::solvePnP(
-				worldCoordinateList,
-				m_pImpl->checkerboardCorners,
+			cv::aruco::estimatePoseCharucoBoard(
+				charucoCorners,
+				charucoIds,
+				m_pImpl->board,
 				m_pImpl->cameraMatrix,
 				m_pImpl->distortionCoefficients,
 				rvec,

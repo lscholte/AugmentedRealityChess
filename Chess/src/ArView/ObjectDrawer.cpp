@@ -235,8 +235,8 @@ namespace ArView
 			{
 				VertexBuilder().addPosition(glm::vec3(0.0f, 0.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 0.0f)).build(),
 				VertexBuilder().addPosition(glm::vec3(8.0f, 0.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(0.0f, -8.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 1.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(8.0f, -8.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 1.0f)).build()
+				VertexBuilder().addPosition(glm::vec3(0.0f, 8.0f, 0.0f)).addTextureCoord(glm::vec2(0.0f, 1.0f)).build(),
+				VertexBuilder().addPosition(glm::vec3(8.0f, 8.0f, 0.0f)).addTextureCoord(glm::vec2(1.0f, 1.0f)).build()
 			};
 			pDrawableChessboard = std::make_shared<Quad>(quadVertices);
 
@@ -437,7 +437,7 @@ namespace ArView
 				glBindTexture(GL_TEXTURE_2D, m_pImpl->chessboardTexture);
 
 				glm::mat4 model(1.0f);
-				model = glm::translate(model, glm::vec3(0.5f, -0.5f, 0.0f));
+				//model = glm::translate(model, glm::vec3(0.5f, -0.5f, 0.0f));
 
 				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
@@ -462,10 +462,10 @@ namespace ArView
 					float constexpr chessPieceScaleFactor = 0.025f;
 
 					glm::mat4 model(1.0f);
-					model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.0f));
+					model = glm::translate(model, glm::vec3(position.file - 0.5f, position.rank - 0.5f, 0.0f));
 					model = pChessPiece->isWhite()
-						? glm::rotate(model, -0.5f * 3.1415926f, glm::vec3(0.0f, 0.0f, 1.0f))
-						: glm::rotate(model, 0.5f * 3.1415926f, glm::vec3(0.0f, 0.0f, 1.0f));
+						? glm::rotate(model, 0.5f * 3.1415926f, glm::vec3(0.0f, 0.0f, 1.0f))
+						: glm::rotate(model, -0.5f * 3.1415926f, glm::vec3(0.0f, 0.0f, 1.0f));
 					model = glm::scale(model, glm::vec3(chessPieceScaleFactor));
 
 					GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
@@ -490,7 +490,7 @@ namespace ArView
 					for (auto const& position : legalMoves)
 					{
 						glm::mat4 model(1.0f);
-						model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.001f));
+						model = glm::translate(model, glm::vec3(position.file - 0.5f, position.rank - 0.5f, 0.001f));
 
 						GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 						glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
@@ -500,7 +500,7 @@ namespace ArView
 					{
 						Model::Position position = pSelectedPiece->getPosition();
 						glm::mat4 model(1.0f);
-						model = glm::translate(model, glm::vec3(position.file, -position.rank, 0.001f));
+						model = glm::translate(model, glm::vec3(position.file - 0.5f, position.rank - 0.5f, 0.001f));
 
 						GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 						glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
@@ -529,7 +529,7 @@ namespace ArView
 			for (auto const& positionColorPair : m_pImpl->positionColorMap)
 			{
 				glm::mat4 model(1.0f);
-				model = glm::translate(model, glm::vec3(positionColorPair.first.file, -positionColorPair.first.rank, 0.0f));
+				model = glm::translate(model, glm::vec3(positionColorPair.first.file - 0.5f, positionColorPair.first.rank - 0.5f, 0.0f));
 
 				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->idShaderProgram, "Model");
 				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
