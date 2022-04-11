@@ -10,3 +10,6 @@ zlib/1.2.12
 
 [generators]
 visual_studio
+
+[options]
+opencv:contrib=True
