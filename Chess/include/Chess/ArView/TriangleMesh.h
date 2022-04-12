@@ -6,6 +6,7 @@
 
 #include <Chess/ArView/DrawableObject.h>
 #include <Chess/ArView/Vertex.h>
+#include <Chess/ArView/Texture.h>
 
 #include <vector>
 
@@ -23,7 +24,8 @@ namespace ArView
 
 		TriangleMesh(
 			std::vector<Vertex> const& vertices,
-			std::vector<unsigned int> const& indices);
+			std::vector<unsigned int> const& indices,
+			std::vector<Texture> const& textures);
 
 		virtual ~TriangleMesh();
 
@@ -32,6 +34,7 @@ namespace ArView
 	private:
 		std::vector<Vertex> m_vertices;
 		std::vector<unsigned int> m_indices;
+		std::vector<Texture> m_textures;
 		unsigned int m_vertexArrayObject, m_vertexBufferObject, m_elementBufferObject;
 	};
 }

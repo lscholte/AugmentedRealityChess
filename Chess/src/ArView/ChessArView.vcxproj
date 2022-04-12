@@ -35,6 +35,7 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Texture.h" />
     <ClInclude Include="..\..\include\Chess\ArView\TriangleMesh.h">
       <SubType>
       </SubType>
@@ -68,6 +69,10 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Quad.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
       <SubType>
       </SubType>
     </ClCompile>
