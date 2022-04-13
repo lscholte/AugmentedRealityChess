@@ -146,17 +146,6 @@ namespace ArView
 				pSelectedPieceSquare = std::make_shared<Quad>(chessboardSquareVertices);
 			}
 
-			//Create Axis vertices with particular positions and color
-			std::vector<Vertex> axesVertices
-			{
-				VertexBuilder().addPosition(glm::vec3(0.0f, 0.0f, 0.0f)).addColor(glm::vec3(1.0f, 0.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(1.0f, 0.0f, 0.0f)).addColor(glm::vec3(1.0f, 0.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(0.0f, 0.0f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(0.0f, 1.0f, 0.0f)).addColor(glm::vec3(0.0f, 1.0f, 0.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(0.0f, 0.0f, 0.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
-				VertexBuilder().addPosition(glm::vec3(0.0f, 0.0f, 1.0f)).addColor(glm::vec3(0.0f, 0.0f, 1.0f)).build(),
-			};
-
 			pQuad = std::make_shared<Quad>();
 
 			pDrawableChessboard = ObjectLoader().load("./assets/chessboard/chessboard.obj", glm::vec3(1.0f, 0.0f, 0.0f));
@@ -336,8 +325,6 @@ namespace ArView
 			
 			//Render chessboard
 			{
-				glBindTexture(GL_TEXTURE_2D, m_pImpl->chessboardTexture);
-
 				glm::mat4 model(1.0f);
 				model = glm::translate(model, glm::vec3(4.0f, 4.0f - 0.02f, 0.0f));
 				model = glm::scale(model, glm::vec3(chessboardScaleX, chessboardScaleY, chessboardScaleZ));
@@ -349,8 +336,6 @@ namespace ArView
 				glUniform1i(hasImageUniformLocation, true);
 
 				m_pImpl->pDrawableChessboard->draw();
-
-				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 
 			//Render chess pieces
