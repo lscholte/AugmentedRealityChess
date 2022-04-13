@@ -38,6 +38,9 @@
 #include <format>
 
 #include <stb_image.h>
+#include <boost/functional/hash.hpp>
+
+#include <unordered_map>
 
 namespace Chess
 {
@@ -54,19 +57,10 @@ namespace ArView
 
 		glm::mat4 projection;
 
-		std::shared_ptr<DrawableObject> pWhitePawn;
-		std::shared_ptr<DrawableObject> pWhiteRook;
-		std::shared_ptr<DrawableObject> pWhiteKnight;
-		std::shared_ptr<DrawableObject> pWhiteBishop;
-		std::shared_ptr<DrawableObject> pWhiteQueen;
-		std::shared_ptr<DrawableObject> pWhiteKing;
-
-		std::shared_ptr<DrawableObject> pBlackPawn;
-		std::shared_ptr<DrawableObject> pBlackRook;
-		std::shared_ptr<DrawableObject> pBlackKnight;
-		std::shared_ptr<DrawableObject> pBlackBishop;
-		std::shared_ptr<DrawableObject> pBlackQueen;
-		std::shared_ptr<DrawableObject> pBlackKing;
+		std::unordered_map<
+			std::pair<Model::PieceType, bool>,
+			std::shared_ptr<DrawableObject>,
+			boost::hash<std::pair<Model::PieceType, bool>>> chessPieceMap;
 
 		std::shared_ptr<DrawableObject> pQuad;
 
@@ -104,94 +98,28 @@ namespace ArView
 
 			projection = generateProjectionMatrix();
 
+			std::vector<std::pair<Model::PieceType, std::string>> chessPieceAssetPaths =
+			{
+				{ Model::PieceType::Pawn, "./assets/chess/pawn.stl" },
+				{ Model::PieceType::Rook, "./assets/chess/rook.stl" },
+				{ Model::PieceType::Knight, "./assets/chess/knight.stl" },
+				{ Model::PieceType::Bishop, "./assets/chess/bishop.stl" },
+				{ Model::PieceType::Queen, "./assets/chess/queen.stl" },
+				{ Model::PieceType::King, "./assets/chess/king.stl" }
+			};
+
 			//White Chess Pieces
 			glm::vec3 whiteColor(0.90f, 0.80f, 0.60f);
+			for (auto const& chessPieceAssetPath : chessPieceAssetPaths)
 			{
-				pWhitePawn = ObjectLoader().load("./assets/chess/pawn.stl", whiteColor);
-				if (!pWhitePawn)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pWhiteRook = ObjectLoader().load("./assets/chess/rook.stl", whiteColor);
-				if (!pWhiteRook)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pWhiteKnight = ObjectLoader().load("./assets/chess/knight.stl", whiteColor);
-				if (!pWhiteKnight)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pWhiteBishop = ObjectLoader().load("./assets/chess/bishop.stl", whiteColor);
-				if (!pWhiteBishop)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pWhiteQueen = ObjectLoader().load("./assets/chess/queen.stl", whiteColor);
-				if (!pWhiteQueen)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pWhiteKing = ObjectLoader().load("./assets/chess/king.stl", whiteColor);
-				if (!pWhiteKing)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
+				loadChessPiece(chessPieceAssetPath.first, chessPieceAssetPath.second, true, whiteColor);
 			}
 
 			//Black Chess Pieces
 			glm::vec3 blackColor(0.3f, 0.2f, 0.17f);
+			for (auto const& chessPieceAssetPath : chessPieceAssetPaths)
 			{
-				pBlackPawn = ObjectLoader().load("./assets/chess/pawn.stl", blackColor);
-				if (!pBlackPawn)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pBlackRook = ObjectLoader().load("./assets/chess/rook.stl", blackColor);
-				if (!pBlackRook)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pBlackKnight = ObjectLoader().load("./assets/chess/knight.stl", blackColor);
-				if (!pBlackKnight)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pBlackBishop = ObjectLoader().load("./assets/chess/bishop.stl", blackColor);
-				if (!pBlackBishop)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pBlackQueen = ObjectLoader().load("./assets/chess/queen.stl", blackColor);
-				if (!pBlackQueen)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
-			}
-			{
-				pBlackKing = ObjectLoader().load("./assets/chess/king.stl", blackColor);
-				if (!pBlackKing)
-				{
-					throw std::runtime_error("Failed to load mesh");
-				}
+				loadChessPiece(chessPieceAssetPath.first, chessPieceAssetPath.second, false, blackColor);
 			}
 
 			{
@@ -338,30 +266,18 @@ namespace ArView
 
 		std::shared_ptr<DrawableObject> getDrawableChessPiece(bool isWhite, Model::PieceType type)
 		{
-			if (isWhite)
+			return chessPieceMap.find({ type, isWhite })->second;
+		}
+
+		void loadChessPiece(Model::PieceType type, std::string const& assetPath, bool isWhite, glm::vec3 const& color)
+		{
+			ObjectLoader objectLoader;
+			std::shared_ptr<DrawableObject> pChessPiece = objectLoader.load(assetPath, color);
+			if (!pChessPiece)
 			{
-				switch (type)
-				{
-				case Model::PieceType::Pawn:	return pWhitePawn;
-				case Model::PieceType::Rook:	return pWhiteRook;
-				case Model::PieceType::Knight:	return pWhiteKnight;
-				case Model::PieceType::Bishop:	return pWhiteBishop;
-				case Model::PieceType::Queen:	return pWhiteQueen;
-				case Model::PieceType::King:	return pWhiteKing;
-				}
+				throw std::runtime_error("Failed to load mesh: " + assetPath);
 			}
-			else
-			{
-				switch (type)
-				{
-				case Model::PieceType::Pawn:	return pBlackPawn;
-				case Model::PieceType::Rook:	return pBlackRook;
-				case Model::PieceType::Knight:	return pBlackKnight;
-				case Model::PieceType::Bishop:	return pBlackBishop;
-				case Model::PieceType::Queen:	return pBlackQueen;
-				case Model::PieceType::King:	return pBlackKing;
-				}
-			}
+			chessPieceMap[{ type, isWhite }] = pChessPiece;
 		}
 	};
 
