@@ -7,6 +7,7 @@
 #include <Chess/ArView/Vertex.h>
 #include <Chess/ArView/VertexBuilder.h>
 #include <Chess/ArView/DrawableObject.h>
+#include <Chess/ArView/CompositeDrawableObject.h>
 #include <Chess/ArView/TriangleMesh.h>
 #include <Chess/ArView/Texture.h>
 
@@ -157,17 +158,23 @@ namespace
 		return std::make_shared<Chess::ArView::TriangleMesh>(vertices, indices, textures);
 	}
 
-	void processNode(aiNode* node, const aiScene* scene, std::string const& directory, std::vector<std::shared_ptr<Chess::ArView::DrawableObject>>& whiteKnight, glm::vec3 const& color)
+	std::shared_ptr<Chess::ArView::DrawableObject> processNode(
+		aiNode* node,
+		const aiScene* scene,
+		std::string const& directory,
+		glm::vec3 const& color)
 	{
+		std::vector<std::shared_ptr<Chess::ArView::DrawableObject>> drawableObjects;
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			whiteKnight.push_back(processMesh(mesh, scene, directory, color));
+			drawableObjects.push_back(processMesh(mesh, scene, directory, color));
 		}
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
 		{
-			processNode(node->mChildren[i], scene, directory, whiteKnight, color);
+			drawableObjects.push_back(processNode(node->mChildren[i], scene, directory, color));
 		}
+		return std::make_shared<Chess::ArView::CompositeDrawableObject>(drawableObjects);
 	}
 }
 
@@ -178,24 +185,19 @@ namespace ArView
 	ObjectLoader::~ObjectLoader() = default;
 
 	//https://learnopengl.com/Model-Loading/Assimp
-	bool ObjectLoader::load(
+	std::shared_ptr<DrawableObject> ObjectLoader::load(
 		std::string const& filePath,
-		std::vector<std::shared_ptr<DrawableObject>>&whiteKnight,
 		glm::vec3 const& color)
 	{
 		Assimp::Importer importer;
 		aiScene const* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenNormals);
 		if (!pScene)
 		{
-			return false;
+			return nullptr;
 		}
 
-		whiteKnight.clear();
-
 		std::string directory = filePath.substr(0, filePath.find_last_of('/'));
-		processNode(pScene->mRootNode, pScene, directory, whiteKnight, color);
-
-		return true;
+		return processNode(pScene->mRootNode, pScene, directory, color);
 	}
 
 }
