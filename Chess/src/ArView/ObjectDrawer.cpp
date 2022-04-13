@@ -54,27 +54,26 @@ namespace ArView
 
 		glm::mat4 projection;
 
-		std::vector<std::shared_ptr<DrawableObject>> whitePawn;
-		std::vector<std::shared_ptr<DrawableObject>> whiteRook;
-		std::vector<std::shared_ptr<DrawableObject>> whiteKnight;
-		std::vector<std::shared_ptr<DrawableObject>> whiteBishop;
-		std::vector<std::shared_ptr<DrawableObject>> whiteQueen;
-		std::vector<std::shared_ptr<DrawableObject>> whiteKing;
+		std::shared_ptr<DrawableObject> pWhitePawn;
+		std::shared_ptr<DrawableObject> pWhiteRook;
+		std::shared_ptr<DrawableObject> pWhiteKnight;
+		std::shared_ptr<DrawableObject> pWhiteBishop;
+		std::shared_ptr<DrawableObject> pWhiteQueen;
+		std::shared_ptr<DrawableObject> pWhiteKing;
 
-		std::vector<std::shared_ptr<DrawableObject>> blackPawn;
-		std::vector<std::shared_ptr<DrawableObject>> blackRook;
-		std::vector<std::shared_ptr<DrawableObject>> blackKnight;
-		std::vector<std::shared_ptr<DrawableObject>> blackBishop;
-		std::vector<std::shared_ptr<DrawableObject>> blackQueen;
-		std::vector<std::shared_ptr<DrawableObject>> blackKing;
+		std::shared_ptr<DrawableObject> pBlackPawn;
+		std::shared_ptr<DrawableObject> pBlackRook;
+		std::shared_ptr<DrawableObject> pBlackKnight;
+		std::shared_ptr<DrawableObject> pBlackBishop;
+		std::shared_ptr<DrawableObject> pBlackQueen;
+		std::shared_ptr<DrawableObject> pBlackKing;
 
 		std::shared_ptr<DrawableObject> pQuad;
 
 		std::shared_ptr<DrawableObject> pLegalMoveSquare;
 		std::shared_ptr<DrawableObject> pSelectedPieceSquare;
 
-		//std::shared_ptr<DrawableObject> pDrawableChessboard;
-		std::vector<std::shared_ptr<DrawableObject>> drawableChessboard;
+		std::shared_ptr<DrawableObject> pDrawableChessboard;
 		GLuint chessboardTexture;
 
 		Controller::Controller controller;
@@ -108,43 +107,43 @@ namespace ArView
 			//White Chess Pieces
 			glm::vec3 whiteColor(0.90f, 0.80f, 0.60f);
 			{
-				bool result = ObjectLoader().load("./assets/chess/pawn.stl", whitePawn, whiteColor);
-				if (!result)
+				pWhitePawn = ObjectLoader().load("./assets/chess/pawn.stl", whiteColor);
+				if (!pWhitePawn)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/rook.stl", whiteRook, whiteColor);
-				if (!result)
+				pWhiteRook = ObjectLoader().load("./assets/chess/rook.stl", whiteColor);
+				if (!pWhiteRook)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/knight.stl", whiteKnight, whiteColor);
-				if (!result)
+				pWhiteKnight = ObjectLoader().load("./assets/chess/knight.stl", whiteColor);
+				if (!pWhiteKnight)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/bishop.stl", whiteBishop, whiteColor);
-				if (!result)
+				pWhiteBishop = ObjectLoader().load("./assets/chess/bishop.stl", whiteColor);
+				if (!pWhiteBishop)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/queen.stl", whiteQueen, whiteColor);
-				if (!result)
+				pWhiteQueen = ObjectLoader().load("./assets/chess/queen.stl", whiteColor);
+				if (!pWhiteQueen)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/king.stl", whiteKing, whiteColor);
-				if (!result)
+				pWhiteKing = ObjectLoader().load("./assets/chess/king.stl", whiteColor);
+				if (!pWhiteKing)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
@@ -153,43 +152,43 @@ namespace ArView
 			//Black Chess Pieces
 			glm::vec3 blackColor(0.3f, 0.2f, 0.17f);
 			{
-				bool result = ObjectLoader().load("./assets/chess/pawn.stl", blackPawn, blackColor);
-				if (!result)
+				pBlackPawn = ObjectLoader().load("./assets/chess/pawn.stl", blackColor);
+				if (!pBlackPawn)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/rook.stl", blackRook, blackColor);
-				if (!result)
+				pBlackRook = ObjectLoader().load("./assets/chess/rook.stl", blackColor);
+				if (!pBlackRook)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/knight.stl", blackKnight, blackColor);
-				if (!result)
+				pBlackKnight = ObjectLoader().load("./assets/chess/knight.stl", blackColor);
+				if (!pBlackKnight)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/bishop.stl", blackBishop, blackColor);
-				if (!result)
+				pBlackBishop = ObjectLoader().load("./assets/chess/bishop.stl", blackColor);
+				if (!pBlackBishop)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/queen.stl", blackQueen, blackColor);
-				if (!result)
+				pBlackQueen = ObjectLoader().load("./assets/chess/queen.stl", blackColor);
+				if (!pBlackQueen)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
 			}
 			{
-				bool result = ObjectLoader().load("./assets/chess/king.stl", blackKing, blackColor);
-				if (!result)
+				pBlackKing = ObjectLoader().load("./assets/chess/king.stl", blackColor);
+				if (!pBlackKing)
 				{
 					throw std::runtime_error("Failed to load mesh");
 				}
@@ -232,7 +231,7 @@ namespace ArView
 
 			pQuad = std::make_shared<Quad>();
 
-			ObjectLoader().load("./assets/chessboard/chessboard.obj", drawableChessboard, glm::vec3(1.0f, 0.0f, 0.0f));
+			pDrawableChessboard = ObjectLoader().load("./assets/chessboard/chessboard.obj", glm::vec3(1.0f, 0.0f, 0.0f));
 
 			for (unsigned char rank = 1; rank <= controller.getGame().getBoard().getSize().ranks; ++rank)
 			{
@@ -337,30 +336,30 @@ namespace ArView
 			return projection;
 		}
 
-		std::vector<std::shared_ptr<DrawableObject>> getDrawableChessPiece(bool isWhite, Model::PieceType type)
+		std::shared_ptr<DrawableObject> getDrawableChessPiece(bool isWhite, Model::PieceType type)
 		{
 			if (isWhite)
 			{
 				switch (type)
 				{
-				case Model::PieceType::Pawn:	return whitePawn;
-				case Model::PieceType::Rook:	return whiteRook;
-				case Model::PieceType::Knight:	return whiteKnight;
-				case Model::PieceType::Bishop:	return whiteBishop;
-				case Model::PieceType::Queen:	return whiteQueen;
-				case Model::PieceType::King:	return whiteKing;
+				case Model::PieceType::Pawn:	return pWhitePawn;
+				case Model::PieceType::Rook:	return pWhiteRook;
+				case Model::PieceType::Knight:	return pWhiteKnight;
+				case Model::PieceType::Bishop:	return pWhiteBishop;
+				case Model::PieceType::Queen:	return pWhiteQueen;
+				case Model::PieceType::King:	return pWhiteKing;
 				}
 			}
 			else
 			{
 				switch (type)
 				{
-				case Model::PieceType::Pawn:	return blackPawn;
-				case Model::PieceType::Rook:	return blackRook;
-				case Model::PieceType::Knight:	return blackKnight;
-				case Model::PieceType::Bishop:	return blackBishop;
-				case Model::PieceType::Queen:	return blackQueen;
-				case Model::PieceType::King:	return blackKing;
+				case Model::PieceType::Pawn:	return pBlackPawn;
+				case Model::PieceType::Rook:	return pBlackRook;
+				case Model::PieceType::Knight:	return pBlackKnight;
+				case Model::PieceType::Bishop:	return pBlackBishop;
+				case Model::PieceType::Queen:	return pBlackQueen;
+				case Model::PieceType::King:	return pBlackKing;
 				}
 			}
 		}
@@ -433,11 +432,7 @@ namespace ArView
 				GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
 				glUniform1i(hasImageUniformLocation, true);
 
-				//m_pImpl->pDrawableChessboard->draw();
-				for (auto const& pDrawableChessboard : m_pImpl->drawableChessboard)
-				{
-					pDrawableChessboard->draw();
-				}
+				m_pImpl->pDrawableChessboard->draw();
 
 				glBindTexture(GL_TEXTURE_2D, 0);
 			}
@@ -463,13 +458,7 @@ namespace ArView
 					GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 					glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
 
-					std::vector<std::shared_ptr<DrawableObject>> chessPieceParts =
-						m_pImpl->getDrawableChessPiece(pChessPiece->isWhite(), pChessPiece->getType());
-
-					for (auto const& chessPiecePart : chessPieceParts)
-					{
-						chessPiecePart->draw();
-					}
+					m_pImpl->getDrawableChessPiece(pChessPiece->isWhite(), pChessPiece->getType())->draw();
 				}
 			}
 
