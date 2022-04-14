@@ -15,14 +15,15 @@ uniform mat4 Projection;
 
 void main()
 {
-    vec4 v = Projection * View * Model * vec4(Position, 1.0);
+	mat4 ModelViewProjection = Projection * View * Model;
+    vec4 v = ModelViewProjection * vec4(Position, 1.0);
 	
 	//Flip y because OpenCV y axis goes downward, OpenGL's goes upward
 	v.y *= -1;
 	
 	FragmentColor = Color;
 	FragmentWorldPosition = Model * vec4(Position, 1.0);
-	FragmentNormal = Normal;
+	FragmentNormal = normalize(mat3(transpose(inverse(Model))) * Normal);
 	FragmentTextureCoord = TextureCoord;
 	gl_Position = v;
 }
