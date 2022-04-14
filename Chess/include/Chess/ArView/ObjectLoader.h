@@ -22,6 +22,7 @@ namespace ArView
 	class ObjectLoader
 	{
 	public:
+		ObjectLoader();
 		virtual ~ObjectLoader();
 
 		/// <summary>
@@ -30,6 +31,10 @@ namespace ArView
 		/// <param name="filePath">The path to a file to read</param>
 		/// <returns>A pointer to a DrawableObject if loaded successfully, empty pointer otherwise</returns>
 		std::shared_ptr<DrawableObject> load(std::string const& filePath);
+
+	private:
+		struct Impl;
+		std::shared_ptr<Impl> m_pImpl;
 	};
 }
 }
