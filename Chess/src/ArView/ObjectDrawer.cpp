@@ -78,6 +78,8 @@ namespace ArView
 
 		GLuint idFramebuffer;
 
+		ObjectLoader objectLoader;
+
 		Impl(size_t width, size_t height, Controller::Controller const& controller)
 			: width(width)
 			, height(height)
@@ -266,7 +268,6 @@ namespace ArView
 
 		void loadChessPiece(Model::PieceType type, std::string const& assetPath, bool isWhite)
 		{
-			ObjectLoader objectLoader;
 			std::shared_ptr<DrawableObject> pChessPiece = objectLoader.load(assetPath);
 			if (!pChessPiece)
 			{
@@ -371,6 +372,9 @@ namespace ArView
 
 			//Render selected piece's legal moves
 			{
+				GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
+				glUniform1i(hasImageUniformLocation, false);
+
 				std::shared_ptr<Model::Piece> pSelectedPiece = m_pImpl->controller.getSelectedPiece();
 				if (pSelectedPiece)
 				{
