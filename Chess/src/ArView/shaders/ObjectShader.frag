@@ -46,7 +46,7 @@ void main()
 			float specularAngle = max(dot(R, V), 0.0);
 			float shininess = 10.0;
 			float specular = pow(specularAngle, shininess);
-			float specularStrength = 10.0;
+			float specularStrength = 2.0;
 			specularIllumination = specularStrength * specular * LightColor;
 		}
 
