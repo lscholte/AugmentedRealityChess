@@ -98,28 +98,34 @@ namespace ArView
 
 			projection = generateProjectionMatrix();
 
-			std::vector<std::pair<Model::PieceType, std::string>> chessPieceAssetPaths =
-			{
-				{ Model::PieceType::Pawn, "./assets/chess/pawn.stl" },
-				{ Model::PieceType::Rook, "./assets/chess/rook.stl" },
-				{ Model::PieceType::Knight, "./assets/chess/knight.stl" },
-				{ Model::PieceType::Bishop, "./assets/chess/bishop.stl" },
-				{ Model::PieceType::Queen, "./assets/chess/queen.stl" },
-				{ Model::PieceType::King, "./assets/chess/king.stl" }
-			};
-
 			//White Chess Pieces
-			glm::vec3 whiteColor(0.90f, 0.80f, 0.60f);
-			for (auto const& chessPieceAssetPath : chessPieceAssetPaths)
+			std::vector<std::pair<Model::PieceType, std::string>> whiteChessPieceAssetPaths =
 			{
-				loadChessPiece(chessPieceAssetPath.first, chessPieceAssetPath.second, true, whiteColor);
+				{ Model::PieceType::Pawn, "./assets/pieces/white/pawn.obj" },
+				{ Model::PieceType::Rook, "./assets/pieces/white/rook.obj" },
+				{ Model::PieceType::Knight, "./assets/pieces/white/knight.obj" },
+				{ Model::PieceType::Bishop, "./assets/pieces/white/bishop.obj" },
+				{ Model::PieceType::Queen, "./assets/pieces/white/queen.obj" },
+				{ Model::PieceType::King, "./assets/pieces/white/king.obj" }
+			};
+			for (auto const& chessPieceAssetPath : whiteChessPieceAssetPaths)
+			{
+				loadChessPiece(chessPieceAssetPath.first, chessPieceAssetPath.second, true);
 			}
 
 			//Black Chess Pieces
-			glm::vec3 blackColor(0.3f, 0.2f, 0.17f);
-			for (auto const& chessPieceAssetPath : chessPieceAssetPaths)
+			std::vector<std::pair<Model::PieceType, std::string>> blackChessPieceAssetPaths =
 			{
-				loadChessPiece(chessPieceAssetPath.first, chessPieceAssetPath.second, false, blackColor);
+				{ Model::PieceType::Pawn, "./assets/pieces/black/pawn.obj" },
+				{ Model::PieceType::Rook, "./assets/pieces/black/rook.obj" },
+				{ Model::PieceType::Knight, "./assets/pieces/black/knight.obj" },
+				{ Model::PieceType::Bishop, "./assets/pieces/black/bishop.obj" },
+				{ Model::PieceType::Queen, "./assets/pieces/black/queen.obj" },
+				{ Model::PieceType::King, "./assets/pieces/black/king.obj" }
+			};
+			for (auto const& chessPieceAssetPath : blackChessPieceAssetPaths)
+			{
+				loadChessPiece(chessPieceAssetPath.first, chessPieceAssetPath.second, false);
 			}
 
 			{
@@ -148,7 +154,7 @@ namespace ArView
 
 			pQuad = std::make_shared<Quad>();
 
-			pDrawableChessboard = ObjectLoader().load("./assets/chessboard/chessboard.obj", glm::vec3(1.0f, 0.0f, 0.0f));
+			pDrawableChessboard = ObjectLoader().load("./assets/chessboard/chessboard.obj");
 
 			for (unsigned char rank = 1; rank <= controller.getGame().getBoard().getSize().ranks; ++rank)
 			{
@@ -258,10 +264,10 @@ namespace ArView
 			return chessPieceMap.find({ type, isWhite })->second;
 		}
 
-		void loadChessPiece(Model::PieceType type, std::string const& assetPath, bool isWhite, glm::vec3 const& color)
+		void loadChessPiece(Model::PieceType type, std::string const& assetPath, bool isWhite)
 		{
 			ObjectLoader objectLoader;
-			std::shared_ptr<DrawableObject> pChessPiece = objectLoader.load(assetPath, color);
+			std::shared_ptr<DrawableObject> pChessPiece = objectLoader.load(assetPath);
 			if (!pChessPiece)
 			{
 				throw std::runtime_error("Failed to load mesh: " + assetPath);
@@ -335,15 +341,17 @@ namespace ArView
 
 			//Render chess pieces
 			{
-				GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
-				glUniform1i(hasImageUniformLocation, false);
+
 
 				for (auto const& pChessPiece : m_pImpl->controller.getGame().getBoard().getPieces())
 				{
 					Model::Position position = pChessPiece->getPosition();
 
-					float constexpr chessPieceScaleFactor = 0.025f;
+					GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
+					glUniform1i(hasImageUniformLocation, true);
 
+					float constexpr chessPieceScaleFactor = 0.025f;
+					
 					glm::mat4 model(1.0f);
 					model = glm::translate(model, glm::vec3(position.file, position.rank, chessboardHeight));
 					if (pChessPiece->getType() == Model::PieceType::Knight)

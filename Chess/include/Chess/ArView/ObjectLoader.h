@@ -28,11 +28,8 @@ namespace ArView
 		/// Reads a file into a DrawableObject.
 		/// </summary>
 		/// <param name="filePath">The path to a file to read</param>
-		/// <param name="color">The color to assign the vertices</param>
 		/// <returns>A pointer to a DrawableObject if loaded successfully, empty pointer otherwise</returns>
-		std::shared_ptr<DrawableObject> load(
-			std::string const& filePath,
-			glm::vec3 const& color);
+		std::shared_ptr<DrawableObject> load(std::string const& filePath);
 	};
 }
 }
