@@ -80,7 +80,7 @@ namespace
 		return textures;
 	}
 
-	std::shared_ptr<Chess::ArView::DrawableObject> processMesh(aiMesh* pMesh, const aiScene* pScene, std::string const& directory, glm::vec3 const& color)
+	std::shared_ptr<Chess::ArView::DrawableObject> processMesh(aiMesh* pMesh, const aiScene* pScene, std::string const& directory)
 	{
 		std::vector<Chess::ArView::Vertex> vertices;
 		std::vector<unsigned int> indices;
@@ -116,11 +116,6 @@ namespace
 				//vector.z = mesh->mBitangents[i].z;
 				//vertex.Bitangent = vector;
 			}
-	
-			//Setting a hardcoded color
-			//is basically a lazy placeholder for not trying
-			//to load textures.
-			vertexBuilder.addColor(color);
 
 			vertices.push_back(vertexBuilder.build());
 		}
@@ -161,18 +156,17 @@ namespace
 	std::shared_ptr<Chess::ArView::DrawableObject> processNode(
 		aiNode* node,
 		const aiScene* scene,
-		std::string const& directory,
-		glm::vec3 const& color)
+		std::string const& directory)
 	{
 		std::vector<std::shared_ptr<Chess::ArView::DrawableObject>> drawableObjects;
 		for (unsigned int i = 0; i < node->mNumMeshes; i++)
 		{
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			drawableObjects.push_back(processMesh(mesh, scene, directory, color));
+			drawableObjects.push_back(processMesh(mesh, scene, directory));
 		}
 		for (unsigned int i = 0; i < node->mNumChildren; i++)
 		{
-			drawableObjects.push_back(processNode(node->mChildren[i], scene, directory, color));
+			drawableObjects.push_back(processNode(node->mChildren[i], scene, directory));
 		}
 		return std::make_shared<Chess::ArView::CompositeDrawableObject>(drawableObjects);
 	}
@@ -185,9 +179,7 @@ namespace ArView
 	ObjectLoader::~ObjectLoader() = default;
 
 	//https://learnopengl.com/Model-Loading/Assimp
-	std::shared_ptr<DrawableObject> ObjectLoader::load(
-		std::string const& filePath,
-		glm::vec3 const& color)
+	std::shared_ptr<DrawableObject> ObjectLoader::load(std::string const& filePath)
 	{
 		Assimp::Importer importer;
 		aiScene const* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenNormals);
@@ -197,7 +189,7 @@ namespace ArView
 		}
 
 		std::string directory = filePath.substr(0, filePath.find_last_of('/'));
-		return processNode(pScene->mRootNode, pScene, directory, color);
+		return processNode(pScene->mRootNode, pScene, directory);
 	}
 
 }
