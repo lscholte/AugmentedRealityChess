@@ -22,6 +22,8 @@
 
 #include <glm/ext.hpp>
 
+#include <boost/range/irange.hpp>
+
 #include <string>
 #include <vector>
 #include <mutex>
@@ -36,24 +38,12 @@ namespace
 	using WorldCoordinate = cv::Point3f;
 	using WorldCoordinateList = std::vector<WorldCoordinate>;
 
+	using CharucoId = int;
+	using CharucoIdList = std::vector<CharucoId>;
+
 	int constexpr minCalibrationImages = 5;
 
 	cv::Size const checkerboardSize(7, 7);
-
-	WorldCoordinateList generateWorldCoordinates()
-	{
-		WorldCoordinateList worldCoordinateList;
-		for (int y = 0; y < checkerboardSize.height; ++y)
-		{
-			for (int x = 0; x < checkerboardSize.width; ++x)
-			{
-				//worldCoordinateList.emplace_back(x+1.5f, -(y+1.5f), 0.0f);
-				worldCoordinateList.emplace_back(x+1.5f, y+1.5f, 0.0f);
-			}
-		}
-
-		return worldCoordinateList;
-	}
 }
 
 namespace Chess
@@ -67,11 +57,11 @@ namespace ArView
 
 		cv::VideoCapture videoCapture;
 
-		bool cornersOrdered;
-		ImageCoordinateList checkerboardCorners;
+		ImageCoordinateList currentCharucoCorners;
+		CharucoIdList currentCharucoIds;
 
-		std::vector<ImageCoordinateList> imagePoints;
-		std::vector<WorldCoordinateList> objectPoints;
+		std::vector<ImageCoordinateList> calibrationCharucoCorners;
+		std::vector<CharucoIdList> calibrationCharucoIds;
 
 		cv::Size imageSize;
 
@@ -85,38 +75,36 @@ namespace ArView
 
 		ObjectDrawer objectDrawer;
 
-		cv::Ptr<cv::aruco::Dictionary> dictionary;
-		cv::Ptr<cv::aruco::CharucoBoard> board;
+		cv::Ptr<cv::aruco::Dictionary> charucoDictionary;
+		cv::Ptr<cv::aruco::CharucoBoard> charucoBoard;
 
 		Impl()
 			: videoCapture(0)
-			, cornersOrdered(false)
 			, imageSize(videoCapture.get(cv::CAP_PROP_FRAME_WIDTH), videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT))
 			, objectDrawer(imageSize.width, imageSize.height, controller)
 		{
 			resetCalibration();
 
-			dictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_250);
-			board = cv::aruco::CharucoBoard::create(8, 8, 1.0f, 0.8f, dictionary);
-			board->chessboardCorners = generateWorldCoordinates();
+			charucoDictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_250);
+			charucoBoard = cv::aruco::CharucoBoard::create(8, 8, 1.0f, 0.8f, charucoDictionary);
 
 		}
 
 		bool canSaveCalibrationImage()
 		{
-			return cornersOrdered;
+			return !currentCharucoCorners.empty();
 		}
 
 		bool canCalibrate()
 		{
-			return imagePoints.size() >= minCalibrationImages;
+			return calibrationCharucoCorners.size() >= minCalibrationImages;
 		}
 
 		void resetCalibration()
 		{
 			reprojectionError = NAN;
-			imagePoints.clear();
-			objectPoints.clear();
+			calibrationCharucoCorners.clear();
+			calibrationCharucoIds.clear();
 			distortionCoefficients.clear();
 			isCalibrated = false;
 		}
@@ -146,12 +134,13 @@ namespace ArView
 		cv::Mat image;
 		m_pImpl->videoCapture >> image;
 
+		m_pImpl->currentCharucoCorners.clear();
+		m_pImpl->currentCharucoIds.clear();
+
 		cv::Ptr<cv::aruco::DetectorParameters> params = cv::aruco::DetectorParameters::create();
 		std::vector<int> markerIds;
 		std::vector<ImageCoordinateList> markerCorners;
-		std::vector<cv::Point2f> charucoCorners;
-		std::vector<int> charucoIds;
-		cv::aruco::detectMarkers(image, m_pImpl->dictionary, markerCorners, markerIds, params);
+		cv::aruco::detectMarkers(image, m_pImpl->charucoDictionary, markerCorners, markerIds, params);
 
 		if (!markerCorners.empty())
 		{
@@ -162,15 +151,21 @@ namespace ArView
 			//	cv::cornerSubPix(temp, points, cv::Size(11, 11), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30, 0.001));
 			//}
 
-			cv::aruco::interpolateCornersCharuco(markerCorners, markerIds, image, m_pImpl->board, charucoCorners, charucoIds);
+			cv::aruco::interpolateCornersCharuco(
+				markerCorners,
+				markerIds,
+				image,
+				m_pImpl->charucoBoard,
+				m_pImpl->currentCharucoCorners,
+				m_pImpl->currentCharucoIds);
 		}
 
 		if (showCalibrationInfo)
 		{
 			cv::aruco::drawDetectedMarkers(image, markerCorners, markerIds);
-			if (!charucoCorners.empty())
+			if (!m_pImpl->currentCharucoCorners.empty())
 			{
-				cv::aruco::drawDetectedCornersCharuco(image, charucoCorners, charucoIds);
+				cv::aruco::drawDetectedCornersCharuco(image, m_pImpl->currentCharucoCorners, m_pImpl->currentCharucoIds);
 			}
 		}
 
@@ -185,13 +180,13 @@ namespace ArView
 		//	image = modified;
 		//}
 
-		if (m_pImpl->isCalibrated && !charucoCorners.empty())
+		if (m_pImpl->isCalibrated && m_pImpl->canSaveCalibrationImage())
 		{
 			cv::Vec3f rvec, tvec;
 			cv::aruco::estimatePoseCharucoBoard(
-				charucoCorners,
-				charucoIds,
-				m_pImpl->board,
+				m_pImpl->currentCharucoCorners,
+				m_pImpl->currentCharucoIds,
+				m_pImpl->charucoBoard,
 				m_pImpl->cameraMatrix,
 				m_pImpl->distortionCoefficients,
 				rvec,
@@ -264,10 +259,8 @@ namespace ArView
 			return false;
 		}
 
-		m_pImpl->imagePoints.push_back(m_pImpl->checkerboardCorners);
-
-		WorldCoordinateList& worldCoordinateList = m_pImpl->objectPoints.emplace_back();
-		worldCoordinateList = generateWorldCoordinates();
+		m_pImpl->calibrationCharucoCorners.push_back(m_pImpl->currentCharucoCorners);
+		m_pImpl->calibrationCharucoIds.push_back(m_pImpl->currentCharucoIds);
 
 		return true;
 	}
@@ -275,7 +268,7 @@ namespace ArView
 	int Camera::getCalibrationImageCount() const
 	{
 		std::scoped_lock lock(m_pImpl->mutex);
-		return m_pImpl->imagePoints.size();
+		return m_pImpl->calibrationCharucoCorners.size();
 	}
 
 	bool Camera::canCalibrate() const
@@ -300,9 +293,10 @@ namespace ArView
 		m_pImpl->cameraMatrix.at<double>(1, 2) = 0.5 * m_pImpl->imageSize.height;
 
 		std::vector<cv::Mat> rvecs, tvecs;
-		m_pImpl->reprojectionError = cv::calibrateCamera(
-			m_pImpl->objectPoints,
-			m_pImpl->imagePoints,
+		m_pImpl->reprojectionError = cv::aruco::calibrateCameraCharuco(
+			m_pImpl->calibrationCharucoCorners,
+			m_pImpl->calibrationCharucoIds,
+			m_pImpl->charucoBoard,
 			m_pImpl->imageSize,
 			m_pImpl->cameraMatrix,
 			m_pImpl->distortionCoefficients,
@@ -336,8 +330,8 @@ namespace ArView
 		cv::Mat cameraMatrix = cv::Mat::eye(3, 3, CV_64F);
 		std::vector<float> distortionCoefficients;
 		distortionCoefficients.resize(5);
-		std::vector<ImageCoordinateList> imagePoints;
-		std::vector<WorldCoordinateList> objectPoints;
+		std::vector<ImageCoordinateList> calibrationCharucoCorners;
+		std::vector<CharucoIdList> calibrationCharucoIds;
 		try
 		{
 			std::string csvLine;
@@ -388,16 +382,14 @@ namespace ArView
 				//Ignore the first entry which just identifies the calibration image
 				std::getline(lineStream, tempItem, ',');
 
-				ImageCoordinateList& points = imagePoints.emplace_back();
-				std::string xCoord, yCoord;
-				while (std::getline(lineStream, xCoord, ',') && std::getline(lineStream, yCoord, ','))
+				ImageCoordinateList& charucoCorners = calibrationCharucoCorners.emplace_back();
+				CharucoIdList& charucoIds = calibrationCharucoIds.emplace_back();
+				std::string id, xCoord, yCoord;
+				while (std::getline(lineStream, id, ',') && std::getline(lineStream, xCoord, ',') && std::getline(lineStream, yCoord, ','))
 				{
-					points.emplace_back(std::stof(xCoord), std::stof(yCoord));
+					charucoIds.emplace_back(std::stoi(id));
+					charucoCorners.emplace_back(std::stof(xCoord), std::stof(yCoord));
 				}
-
-				//Add corresponding world coordinates
-				WorldCoordinateList& worldCoordinateList = objectPoints.emplace_back();
-				worldCoordinateList = generateWorldCoordinates();
 			}
 
 		}
@@ -409,8 +401,8 @@ namespace ArView
 		m_pImpl->reprojectionError = reprojectionError;
 		m_pImpl->cameraMatrix = cameraMatrix;
 		m_pImpl->distortionCoefficients = distortionCoefficients;
-		m_pImpl->imagePoints = imagePoints;
-		m_pImpl->objectPoints = objectPoints;
+		m_pImpl->calibrationCharucoCorners = calibrationCharucoCorners;
+		m_pImpl->calibrationCharucoIds = calibrationCharucoIds;
 		m_pImpl->isCalibrated = true;
 
 		return true;
@@ -446,16 +438,19 @@ namespace ArView
 				<< m_pImpl->distortionCoefficients[3] << ","
 				<< m_pImpl->distortionCoefficients[4] << "\n";
 
-			for (size_t i = 0; i < m_pImpl->imagePoints.size(); ++i)
+			for (size_t i = 0; i < m_pImpl->calibrationCharucoCorners.size(); ++i)
 			{
-				ImageCoordinateList const& imagePointList = m_pImpl->imagePoints[i];
+				auto cornerIndexRange = boost::irange(m_pImpl->calibrationCharucoCorners[i].size());
+
 				std::string csvRow = std::accumulate(
-					imagePointList.cbegin(),
-					imagePointList.cend(),
+					cornerIndexRange.begin(),
+					cornerIndexRange.end(),
 					std::string("Calibration " + std::to_string(i + 1)),
-					[](std::string const& csvRow, ImageCoordinate const& imagePoint)
+					[this, i](std::string const& csvRow, size_t j)
 					{
-						return csvRow + "," + std::to_string(imagePoint.x) + "," + std::to_string(imagePoint.y);
+						CharucoId id = m_pImpl->calibrationCharucoIds[i][j];
+						ImageCoordinate cornerPoint = m_pImpl->calibrationCharucoCorners[i][j];
+						return csvRow + "," + std::to_string(id) + "," + std::to_string(cornerPoint.x) + "," + std::to_string(cornerPoint.y);
 					});
 
 				fileStream << csvRow << "\n";
