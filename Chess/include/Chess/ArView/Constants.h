@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <string>
+
 namespace Chess
 {
 namespace ArView
@@ -15,5 +17,7 @@ namespace ArView
 
 	float constexpr Z_NEAR = 1.0f;
 	float constexpr Z_FAR = 1000.0f;
+
+	std::string const TEXTURE_DIFFUSE = "DiffuseTexture";
 }
 }

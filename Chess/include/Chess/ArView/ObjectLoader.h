@@ -8,6 +8,7 @@
 
 #include <string>
 #include <memory>
+#include <filesystem>
 
 namespace Chess
 {
@@ -30,7 +31,7 @@ namespace ArView
 		/// </summary>
 		/// <param name="filePath">The path to a file to read</param>
 		/// <returns>A pointer to a DrawableObject if loaded successfully, empty pointer otherwise</returns>
-		std::shared_ptr<DrawableObject> load(std::string const& filePath);
+		std::shared_ptr<DrawableObject> load(std::filesystem::path const& filePath);
 
 	private:
 		struct Impl;

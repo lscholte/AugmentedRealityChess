@@ -36,9 +36,6 @@
     <ClCompile Include="Quad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CompositeDrawableObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

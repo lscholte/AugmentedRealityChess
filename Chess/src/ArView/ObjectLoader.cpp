@@ -10,6 +10,7 @@
 #include <Chess/ArView/CompositeDrawableObject.h>
 #include <Chess/ArView/TriangleMesh.h>
 #include <Chess/ArView/Texture.h>
+#include <Chess/ArView/Constants.h>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -20,29 +21,32 @@
 #include <stb_image.h>
 
 #include <iostream>
+#include <filesystem>
 
 namespace
 {
-	unsigned int TextureFromFile(const char* path, std::string const& directory)
+	GLenum colorComponentCountToFormat(int numComponents)
 	{
-		std::string filename = std::string(path);
-		filename = directory + '/' + filename;
+		switch (numComponents)
+		{
+		case 1: return GL_RED;
+		case 3: return GL_RGB;
+		case 4: return GL_RGBA;
+		}
+		throw std::runtime_error("Invalid number of components");
+	}
 
+	unsigned int generateOpenGlTexture(std::filesystem::path const& texturePath)
+	{
 		unsigned int textureID;
 		glGenTextures(1, &textureID);
 
-		int width, height, nrComponents;
+		int width, height, numComponents;
 		stbi_set_flip_vertically_on_load(true);
-		unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		unsigned char* data = stbi_load(texturePath.string().c_str(), &width, &height, &numComponents, 0);
 		if (data)
 		{
-			GLenum format;
-			if (nrComponents == 1)
-				format = GL_RED;
-			else if (nrComponents == 3)
-				format = GL_RGB;
-			else if (nrComponents == 4)
-				format = GL_RGBA;
+			GLenum format = colorComponentCountToFormat(numComponents);
 
 			glBindTexture(GL_TEXTURE_2D, textureID);
 			glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
@@ -57,11 +61,20 @@ namespace
 		}
 		else
 		{
-			std::cout << "Texture failed to load at path: " << path << std::endl;
+			std::cout << "Texture failed to load at path: " << texturePath << std::endl;
 			stbi_image_free(data);
 		}
 
 		return textureID;
+	}
+
+	std::string getTextureTypeString(aiTextureType type)
+	{
+		switch (type)
+		{
+		case aiTextureType_DIFFUSE: return Chess::ArView::TEXTURE_DIFFUSE;
+		}
+		throw std::runtime_error("Unhandled texture type");
 	}
 }
 
@@ -73,37 +86,52 @@ namespace ArView
 	{
 		std::vector<Texture> loadedTextures;
 
-		std::vector<Chess::ArView::Texture> loadMaterialTextures(aiMaterial* mat, std::string const& directory, aiTextureType type, std::string const& typeName)
+		std::vector<Chess::ArView::Texture> loadMaterialTextures(
+			aiMaterial* pMaterial,
+			std::filesystem::path const& directory,
+			aiTextureType textureType)
 		{
 			std::vector<Chess::ArView::Texture> textures;
-			for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
+			for (unsigned int i = 0; i < pMaterial->GetTextureCount(textureType); ++i)
 			{
-				aiString str;
-				mat->GetTexture(type, i, &str);
+				aiString textureFileName;
+				pMaterial->GetTexture(textureType, i, &textureFileName);
+
+				std::filesystem::path texturePath = directory / textureFileName.C_Str();
+
+				//Check previously loaded textures for the texture we want
 				bool skip = false;
-				for (unsigned int j = 0; j < loadedTextures.size(); j++)
+				for (unsigned int j = 0; j < loadedTextures.size(); ++j)
 				{
-					if (std::strcmp(loadedTextures[j].path.data(), str.C_Str()) == 0)
+					if (loadedTextures[j].path == texturePath)
 					{
 						textures.push_back(loadedTextures[j]);
 						skip = true;
 						break;
 					}
 				}
+
+				//Load the texture only if a texture at the particular path
+				//has not already been loaded
 				if (!skip)
-				{   // if texture hasn't been loaded already, load it
+				{
 					Chess::ArView::Texture texture;
-					texture.id = TextureFromFile(str.C_Str(), directory);
-					texture.type = typeName;
-					texture.path = str.C_Str();
+					texture.id = generateOpenGlTexture(texturePath);
+					texture.type = getTextureTypeString(textureType);
+					texture.path = texturePath;
 					textures.push_back(texture);
-					loadedTextures.push_back(texture); // add to loaded textures
+
+					//Add the texture to the cached list of textures for later use
+					loadedTextures.push_back(texture);
 				}
 			}
 			return textures;
 		}
 
-		std::shared_ptr<Chess::ArView::DrawableObject> processMesh(aiMesh* pMesh, const aiScene* pScene, std::string const& directory)
+		std::shared_ptr<Chess::ArView::DrawableObject> processMesh(
+			aiMesh* pMesh,
+			const aiScene* pScene,
+			std::filesystem::path const& directory)
 		{
 			std::vector<Chess::ArView::Vertex> vertices;
 			std::vector<unsigned int> indices;
@@ -119,25 +147,13 @@ namespace ArView
 				aiVector3D normal = pMesh->mNormals[i];
 				vertexBuilder.addNormal(glm::vec3(normal.x, normal.y, normal.z));
 
-				// texture coordinates
-				if (pMesh->mTextureCoords[0]) // does the mesh contain texture coordinates?
+				//Vertices may have up to 8 texture coordinates.
+				//See if the first set of texture coordinates exists
+				//and ignore the remaining 7 sets of coordinates.
+				if (pMesh->mTextureCoords[0])
 				{
-					glm::vec2 vec;
-					// a vertex can contain up to 8 different texture coordinates. We thus make the assumption that we won't 
-					// use models where a vertex can have multiple texture coordinates so we always take the first set (0).
-					vec.x = pMesh->mTextureCoords[0][i].x;
-					vec.y = pMesh->mTextureCoords[0][i].y;
-					vertexBuilder.addTextureCoord(vec);
-					//// tangent
-					//vector.x = mesh->mTangents[i].x;
-					//vector.y = mesh->mTangents[i].y;
-					//vector.z = mesh->mTangents[i].z;
-					//vertex.Tangent = vector;
-					//// bitangent
-					//vector.x = mesh->mBitangents[i].x;
-					//vector.y = mesh->mBitangents[i].y;
-					//vector.z = mesh->mBitangents[i].z;
-					//vertex.Bitangent = vector;
+					aiVector3D textureCoord = pMesh->mTextureCoords[0][i];
+					vertexBuilder.addTextureCoord(glm::vec2(textureCoord.x, textureCoord.y));
 				}
 
 				vertices.push_back(vertexBuilder.build());
@@ -151,45 +167,28 @@ namespace ArView
 				}
 			}
 
-			// process materials
-			aiMaterial* material = pScene->mMaterials[pMesh->mMaterialIndex];
+			aiMaterial* pMaterial = pScene->mMaterials[pMesh->mMaterialIndex];
 
-			// we assume a convention for sampler names in the shaders. Each diffuse texture should be named
-			// as 'texture_diffuseN' where N is a sequential number ranging from 1 to MAX_SAMPLER_NUMBER. 
-			// Same applies to other texture as the following list summarizes:
-			// diffuse: texture_diffuseN
-			// specular: texture_specularN
-			// normal: texture_normalN
-
-			// 1. diffuse maps
-			std::vector<Chess::ArView::Texture> diffuseMaps = loadMaterialTextures(material, directory, aiTextureType_DIFFUSE, "texture_diffuse");
+			std::vector<Chess::ArView::Texture> diffuseMaps = loadMaterialTextures(pMaterial, directory, aiTextureType_DIFFUSE);
 			textures.insert(textures.end(), diffuseMaps.begin(), diffuseMaps.end());
-			//// 2. specular maps
-			//std::vector<Texture> specularMaps = loadMaterialTextures(material, aiTextureType_SPECULAR, "texture_specular");
-			//textures.insert(textures.end(), specularMaps.begin(), specularMaps.end());
-			//// 3. normal maps
-			//std::vector<Texture> normalMaps = loadMaterialTextures(material, aiTextureType_HEIGHT, "texture_normal");
-			//textures.insert(textures.end(), normalMaps.begin(), normalMaps.end());
-			//// 4. height maps
-			//std::vector<Texture> heightMaps = loadMaterialTextures(material, aiTextureType_AMBIENT, "texture_height");
-			//textures.insert(textures.end(), heightMaps.begin(), heightMaps.end());
+
 			return std::make_shared<Chess::ArView::TriangleMesh>(vertices, indices, textures);
 		}
 
 		std::shared_ptr<Chess::ArView::DrawableObject> processNode(
-			aiNode* node,
+			aiNode* pNode,
 			const aiScene* scene,
-			std::string const& directory)
+			std::filesystem::path const& directory)
 		{
 			std::vector<std::shared_ptr<Chess::ArView::DrawableObject>> drawableObjects;
-			for (unsigned int i = 0; i < node->mNumMeshes; i++)
+			for (unsigned int i = 0; i < pNode->mNumMeshes; i++)
 			{
-				aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+				aiMesh* mesh = scene->mMeshes[pNode->mMeshes[i]];
 				drawableObjects.push_back(processMesh(mesh, scene, directory));
 			}
-			for (unsigned int i = 0; i < node->mNumChildren; i++)
+			for (unsigned int i = 0; i < pNode->mNumChildren; i++)
 			{
-				drawableObjects.push_back(processNode(node->mChildren[i], scene, directory));
+				drawableObjects.push_back(processNode(pNode->mChildren[i], scene, directory));
 			}
 			return std::make_shared<Chess::ArView::CompositeDrawableObject>(drawableObjects);
 		}
@@ -202,17 +201,16 @@ namespace ArView
 	ObjectLoader::~ObjectLoader() = default;
 
 	//https://learnopengl.com/Model-Loading/Assimp
-	std::shared_ptr<DrawableObject> ObjectLoader::load(std::string const& filePath)
+	std::shared_ptr<DrawableObject> ObjectLoader::load(std::filesystem::path const& filePath)
 	{
 		Assimp::Importer importer;
-		aiScene const* pScene = importer.ReadFile(filePath, aiProcess_Triangulate | aiProcess_GenNormals);
+		aiScene const* pScene = importer.ReadFile(filePath.string(), aiProcess_Triangulate | aiProcess_GenNormals);
 		if (!pScene)
 		{
 			return nullptr;
 		}
 
-		std::string directory = filePath.substr(0, filePath.find_last_of('/'));
-		return m_pImpl->processNode(pScene->mRootNode, pScene, directory);
+		return m_pImpl->processNode(pScene->mRootNode, pScene, filePath.parent_path());
 	}
 
 }

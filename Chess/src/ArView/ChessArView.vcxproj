@@ -80,10 +80,6 @@
       <SubType>
       </SubType>
     </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
     <ClCompile Include="TriangleMesh.cpp">
       <SubType>
       </SubType>

@@ -54,29 +54,13 @@ namespace ArView
 
 	void TriangleMesh::draw() const
 	{
-		unsigned int diffuseNr = 1;
-		unsigned int specularNr = 1;
-		unsigned int normalNr = 1;
-		unsigned int heightNr = 1;
 		for (unsigned int i = 0; i < m_textures.size(); ++i)
 		{
-			glActiveTexture(GL_TEXTURE0 + i); // active proper texture unit before binding
-			// retrieve texture number (the N in diffuse_textureN)
-			std::string number;
-			std::string name = m_textures[i].type;
-			if (name == "texture_diffuse")
-				number = std::to_string(diffuseNr++);
-			else if (name == "texture_specular")
-				number = std::to_string(specularNr++); // transfer unsigned int to string
-			else if (name == "texture_normal")
-				number = std::to_string(normalNr++); // transfer unsigned int to string
-			else if (name == "texture_height")
-				number = std::to_string(heightNr++); // transfer unsigned int to string
-
-			// now set the sampler to the correct texture unit
+			//FIXME: This shader ID should not be hardcoded.
 			unsigned int shaderId = 1;
-			glUniform1i(glGetUniformLocation(shaderId, (name + number).c_str()), i);
-			// and finally bind the texture
+
+			glActiveTexture(GL_TEXTURE0 + i);
+			glUniform1i(glGetUniformLocation(shaderId, ("Texture" + m_textures[i].type).c_str()), i);
 			glBindTexture(GL_TEXTURE_2D, m_textures[i].id);
 		}
 

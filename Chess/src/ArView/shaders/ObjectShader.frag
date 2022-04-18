@@ -8,7 +8,7 @@ in vec2 FragmentTextureCoord;
 out vec4 FragColor;
 
 uniform bool HasImage;
-uniform sampler2D texture_diffuse1;
+uniform sampler2D TextureDiffuse;
 
 uniform vec3 CameraWorldPosition;
 
@@ -17,7 +17,7 @@ void main()
 	vec4 color;
 	if (HasImage)
 	{
-		color = texture(texture_diffuse1, FragmentTextureCoord);
+		color = texture(TextureDiffuse, FragmentTextureCoord);
 	}
 	else
 	{
