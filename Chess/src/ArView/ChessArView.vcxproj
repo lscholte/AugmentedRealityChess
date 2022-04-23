@@ -31,6 +31,22 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Filters\BlurFilter.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Filters\CompositeFilter.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Filters\Filter.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Filters\ThresholdFilter.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="..\..\include\Chess\ArView\LineSegments.h">
       <SubType>
       </SubType>
@@ -69,6 +85,18 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="CompositeDrawableObject.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Filters\BlurFilter.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Filters\CompositeFilter.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Filters\ThresholdFilter.cpp">
       <SubType>
       </SubType>
     </ClCompile>

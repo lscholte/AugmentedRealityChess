@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Filters">
+      <UniqueIdentifier>{978ed533-5124-46d7-b63d-75e6d9247340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Filters">
+      <UniqueIdentifier>{c1a4196f-980f-473c-888f-14f9cbcb7939}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -38,6 +44,15 @@
     </ClCompile>
     <ClCompile Include="CompositeDrawableObject.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Filters\CompositeFilter.cpp">
+      <Filter>Source Files\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="Filters\ThresholdFilter.cpp">
+      <Filter>Source Files\Filters</Filter>
+    </ClCompile>
+    <ClCompile Include="Filters\BlurFilter.cpp">
+      <Filter>Source Files\Filters</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +94,18 @@
     </ClInclude>
     <ClInclude Include="..\..\include\Chess\ArView\CompositeDrawableObject.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Filters\Filter.h">
+      <Filter>Header Files\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Filters\ThresholdFilter.h">
+      <Filter>Header Files\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Filters\BlurFilter.h">
+      <Filter>Header Files\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Filters\CompositeFilter.h">
+      <Filter>Header Files\Filters</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

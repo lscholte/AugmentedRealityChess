@@ -7,6 +7,11 @@
 #include <Chess/ArView/ObjectDrawer.h>
 #include <Chess/ArView/Constants.h>
 
+#include <Chess/ArView/Filters/Filter.h>
+#include <Chess/ArView/Filters/BlurFilter.h>
+#include <Chess/ArView/Filters/ThresholdFilter.h>
+#include <Chess/ArView/Filters/CompositeFilter.h>
+
 #include <Chess/Controller/Controller.h>
 
 #include <Chess/Model/Position.h>
@@ -78,6 +83,8 @@ namespace ArView
 		cv::Ptr<cv::aruco::Dictionary> charucoDictionary;
 		cv::Ptr<cv::aruco::CharucoBoard> charucoBoard;
 
+		Filters::FilterPtr pThresholdFilter;
+
 		Impl()
 			: videoCapture(0)
 			, imageSize(videoCapture.get(cv::CAP_PROP_FRAME_WIDTH), videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT))
@@ -88,6 +95,13 @@ namespace ArView
 			charucoDictionary = cv::aruco::getPredefinedDictionary(cv::aruco::DICT_4X4_250);
 			charucoBoard = cv::aruco::CharucoBoard::create(8, 8, 1.0f, 0.8f, charucoDictionary);
 
+			std::initializer_list<Filters::FilterPtr> filters
+			{
+				std::make_shared<Filters::BlurFilter>(),
+				std::make_shared<Filters::ThresholdFilter>(),
+			};
+
+			pThresholdFilter = std::make_shared<Filters::CompositeFilter>(filters);
 		}
 
 		bool canSaveCalibrationImage()
