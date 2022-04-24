@@ -86,10 +86,14 @@ namespace ArView
 
 		Filters::FilterPtr pThresholdFilter;
 
+		std::optional<Model::Position> oPointerPosition;
+		unsigned int pointerPositionCounter;
+
 		Impl()
-			: videoCapture(0)
-			, imageSize(videoCapture.get(cv::CAP_PROP_FRAME_WIDTH), videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT))
+			: videoCapture("http://10.0.0.105/video.mjpg")
+			, imageSize(videoCapture.get(cv::CAP_PROP_FRAME_WIDTH) * 0.7, videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT) * 0.7)
 			, objectDrawer(imageSize.width, imageSize.height, controller)
+			, pointerPositionCounter(0)
 		{
 			resetCalibration();
 
@@ -123,6 +127,19 @@ namespace ArView
 			distortionCoefficients.clear();
 			isCalibrated = false;
 		}
+
+		void updatePointerPosition(std::optional<Model::Position> const& oPosition)
+		{
+			if (oPosition == oPointerPosition)
+			{
+				++pointerPositionCounter;
+			}
+			else
+			{
+				pointerPositionCounter = 0;
+			}
+			oPointerPosition = oPosition;
+		}
 	};
 
 	Camera::Camera()
@@ -149,16 +166,12 @@ namespace ArView
 		cv::Mat image;
 		m_pImpl->videoCapture >> image;
 
-		RegionSegmenter segmenter;
-		std::vector<Region> regions = segmenter.findRegions(m_pImpl->pThresholdFilter->apply(image));
+		cv::resize(image, image, m_pImpl->imageSize);
 
-		image = m_pImpl->pThresholdFilter->apply(image);
-		cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
+		cv::Mat thresholdImage = m_pImpl->pThresholdFilter->apply(image);
 
-		if (regions.size() == 1)
-		{
-			cv::circle(image, regions[0].getCentroid(), 2, cv::Scalar(0, 0, 255), 5);
-		}
+		//image = thresholdImage;
+		//cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
 
 		m_pImpl->currentCharucoCorners.clear();
 		m_pImpl->currentCharucoIds.clear();
@@ -259,6 +272,55 @@ namespace ArView
 
 			//Draw AR objects into the scene. This will draw xyz axes and a teapot.
 			m_pImpl->objectDrawer.draw(image.data, intrinsic * extrinsic, cameraPosition);
+
+			std::vector<std::vector<cv::Point>> contours;
+			std::vector<cv::Vec4i> hierarchy;
+			cv::findContours(thresholdImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+			std::sort(
+				contours.begin(),
+				contours.end(),
+				[](std::vector<cv::Point> const& a, std::vector<cv::Point> const& b)
+				{
+					return cv::contourArea(a) > cv::contourArea(b);
+				});
+
+			for (size_t i = 0; i < std::min(size_t(1), contours.size()); ++i)
+			{
+				cv::Moments m = cv::moments(contours[i]);
+				cv::Point centroid(m.m10 / m.m00, m.m01 / m.m00);
+				drawContours(image, contours, (int)i, cv::Scalar(0, 0, 255), 2, cv::LINE_8, hierarchy, 0);
+				cv::circle(image, centroid, 2, cv::Scalar(0, 255, 0), 5);
+
+
+				auto iter = std::max_element(
+					contours[i].begin(),
+					contours[i].end(),
+					[&centroid](cv::Point const& a, cv::Point const& b)
+					{
+						return cv::norm(a - centroid) < cv::norm(b - centroid);
+					});
+
+				cv::circle(image, *iter, 2, cv::Scalar(255, 0, 0), 5);
+
+				std::optional<Model::Position> oPosition = m_pImpl->objectDrawer.handleClick((float)iter->x / m_pImpl->imageSize.width, (float)iter->y / m_pImpl->imageSize.height);
+
+				m_pImpl->updatePointerPosition(oPosition);
+
+				if (m_pImpl->pointerPositionCounter >= 30)
+				{
+					if (m_pImpl->oPointerPosition)
+					{
+						m_pImpl->controller.selectPosition(*m_pImpl->oPointerPosition);
+					}
+					else
+					{
+						m_pImpl->controller.unselectPosition();
+					}
+				}
+
+
+			}
 		}
 
 		//Copy and return the image data

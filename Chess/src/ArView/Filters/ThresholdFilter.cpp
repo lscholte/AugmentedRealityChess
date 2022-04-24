@@ -23,10 +23,13 @@ namespace Filters
 
 	cv::Mat ThresholdFilter::apply(cv::Mat const& image) const
 	{
-		cv::Mat hsvImage, outputImage;
+		cv::Mat hsvImage, outputImage, outputImage2;
 		cv::cvtColor(image, hsvImage, cv::COLOR_BGR2HSV);
-		cv::inRange(hsvImage, cv::Scalar(110, 100, 100), cv::Scalar(130, 255, 255), outputImage);
-		return outputImage;
+		//cv::inRange(hsvImage, cv::Scalar(110, 100, 100), cv::Scalar(130, 255, 255), outputImage);
+
+		cv::inRange(hsvImage, cv::Scalar(162, 50, 50), cv::Scalar(180, 255, 255), outputImage);
+		cv::inRange(hsvImage, cv::Scalar(0, 50, 50), cv::Scalar(20, 255, 255), outputImage2);
+		return outputImage | outputImage2;
 	}
 }
 }
