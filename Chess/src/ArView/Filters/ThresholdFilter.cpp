@@ -25,7 +25,7 @@ namespace Filters
 	{
 		cv::Mat hsvImage, outputImage;
 		cv::cvtColor(image, hsvImage, cv::COLOR_BGR2HSV);
-		cv::inRange(hsvImage, cv::Scalar(100, 100, 100), cv::Scalar(140, 255, 255), outputImage);
+		cv::inRange(hsvImage, cv::Scalar(110, 100, 100), cv::Scalar(130, 255, 255), outputImage);
 		return outputImage;
 	}
 }

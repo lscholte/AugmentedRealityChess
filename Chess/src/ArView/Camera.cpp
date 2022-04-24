@@ -152,6 +152,9 @@ namespace ArView
 		RegionSegmenter segmenter;
 		std::vector<Region> regions = segmenter.findRegions(m_pImpl->pThresholdFilter->apply(image));
 
+		image = m_pImpl->pThresholdFilter->apply(image);
+		cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
+
 		if (regions.size() == 1)
 		{
 			cv::circle(image, regions[0].getCentroid(), 2, cv::Scalar(0, 0, 255), 5);

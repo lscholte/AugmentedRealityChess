@@ -25,7 +25,6 @@ namespace Chess
 {
 namespace ArView
 {
-
 	std::vector<Region> RegionSegmenter::findRegions(cv::Mat const& image) const
 	{
 		cv::Mat labels, stats, centroids;
@@ -57,16 +56,7 @@ namespace ArView
 				auto iter = regionPoints.find(regionId);
 				if (iter != regionPoints.end())
 				{
-					if (row == 0 || row == image.rows - 1 || col == 0 || col == image.cols - 1)
-					{
-						//Ret rid of regions that touch the edge of the image
-						regionPoints.erase(iter);
-					}
-					else
-					{
-						//Add the point to the region
-						iter->second.emplace_back(col, row);
-					}
+					iter->second.emplace_back(col, row);
 				}
 			}
 		}
