@@ -6,7 +6,8 @@
 #include <Chess/ArView/Camera.h>
 #include <Chess/ArView/ObjectDrawer.h>
 #include <Chess/ArView/Constants.h>
-
+#include <Chess/ArView/Region.h>
+#include <Chess/ArView/RegionSegmenter.h>
 #include <Chess/ArView/Filters/Filter.h>
 #include <Chess/ArView/Filters/BlurFilter.h>
 #include <Chess/ArView/Filters/ThresholdFilter.h>
@@ -147,6 +148,14 @@ namespace ArView
 
 		cv::Mat image;
 		m_pImpl->videoCapture >> image;
+
+		RegionSegmenter segmenter;
+		std::vector<Region> regions = segmenter.findRegions(m_pImpl->pThresholdFilter->apply(image));
+
+		if (regions.size() == 1)
+		{
+			cv::circle(image, regions[0].getCentroid(), 2, cv::Scalar(0, 0, 255), 5);
+		}
 
 		m_pImpl->currentCharucoCorners.clear();
 		m_pImpl->currentCharucoIds.clear();

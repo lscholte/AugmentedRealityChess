@@ -54,6 +54,12 @@
     <ClCompile Include="Filters\BlurFilter.cpp">
       <Filter>Source Files\Filters</Filter>
     </ClCompile>
+    <ClCompile Include="Region.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RegionSegmenter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\Chess\ArView\Camera.h">
@@ -106,6 +112,12 @@
     </ClInclude>
     <ClInclude Include="..\..\include\Chess\ArView\Filters\CompositeFilter.h">
       <Filter>Header Files\Filters</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Region.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\RegionSegmenter.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

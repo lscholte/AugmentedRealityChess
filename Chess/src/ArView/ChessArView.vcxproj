@@ -55,6 +55,14 @@
       <SubType>
       </SubType>
     </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\Region.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
+    <ClInclude Include="..\..\include\Chess\ArView\RegionSegmenter.h">
+      <SubType>
+      </SubType>
+    </ClInclude>
     <ClInclude Include="..\..\include\Chess\ArView\Texture.h" />
     <ClInclude Include="..\..\include\Chess\ArView\TriangleMesh.h">
       <SubType>
@@ -105,6 +113,14 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Quad.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="Region.cpp">
+      <SubType>
+      </SubType>
+    </ClCompile>
+    <ClCompile Include="RegionSegmenter.cpp">
       <SubType>
       </SubType>
     </ClCompile>
