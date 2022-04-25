@@ -91,7 +91,7 @@ namespace ArView
 
 		Impl()
 			: videoCapture("http://10.0.0.105/video.mjpg")
-			, imageSize(videoCapture.get(cv::CAP_PROP_FRAME_WIDTH) * 0.7, videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT) * 0.7)
+			, imageSize(videoCapture.get(cv::CAP_PROP_FRAME_WIDTH), videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT))
 			, objectDrawer(imageSize.width, imageSize.height, controller)
 			, pointerPositionCounter(0)
 		{
@@ -169,9 +169,6 @@ namespace ArView
 		cv::resize(image, image, m_pImpl->imageSize);
 
 		cv::Mat thresholdImage = m_pImpl->pThresholdFilter->apply(image);
-
-		//image = thresholdImage;
-		//cv::cvtColor(image, image, cv::COLOR_GRAY2BGR);
 
 		m_pImpl->currentCharucoCorners.clear();
 		m_pImpl->currentCharucoIds.clear();
@@ -288,6 +285,10 @@ namespace ArView
 			for (size_t i = 0; i < std::min(size_t(1), contours.size()); ++i)
 			{
 				cv::Moments m = cv::moments(contours[i]);
+				if (m.m00 < 300)
+				{
+					continue;
+				}
 				cv::Point centroid(m.m10 / m.m00, m.m01 / m.m00);
 				drawContours(image, contours, (int)i, cv::Scalar(0, 0, 255), 2, cv::LINE_8, hierarchy, 0);
 				cv::circle(image, centroid, 2, cv::Scalar(0, 255, 0), 5);
@@ -296,8 +297,12 @@ namespace ArView
 				auto iter = std::max_element(
 					contours[i].begin(),
 					contours[i].end(),
-					[&centroid](cv::Point const& a, cv::Point const& b)
+					[&centroid, &imageSize = m_pImpl->imageSize](cv::Point const& a, cv::Point const& b)
 					{
+						if (a.x == 0 || a.y == 0 || a.x == imageSize.width || a.y == imageSize.height)
+						{
+							return false;
+						}
 						return cv::norm(a - centroid) < cv::norm(b - centroid);
 					});
 

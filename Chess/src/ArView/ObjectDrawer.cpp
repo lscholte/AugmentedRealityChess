@@ -289,6 +289,8 @@ namespace ArView
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
 
+		glm::vec3 translationVector(-0.5f, -0.5f, 0.0f);
+
 		//Render real image
 		{
 			glUseProgram(m_pImpl->imageShaderProgram);
@@ -330,6 +332,7 @@ namespace ArView
 			//Render chessboard
 			{
 				glm::mat4 model(1.0f);
+				model = glm::translate(model, translationVector);
 
 				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
@@ -355,6 +358,7 @@ namespace ArView
 					
 					glm::mat4 model(1.0f);
 					model = glm::translate(model, glm::vec3(position.file, position.rank, chessboardHeight));
+					model = glm::translate(model, translationVector);
 					if (pChessPiece->getType() == Model::PieceType::Knight)
 					{
 						model = pChessPiece->isWhite()
@@ -383,6 +387,7 @@ namespace ArView
 					{
 						glm::mat4 model(1.0f);
 						model = glm::translate(model, glm::vec3(position.file, position.rank, chessboardHeight + 0.001f));
+						model = glm::translate(model, translationVector);
 
 						GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 						glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
@@ -393,6 +398,7 @@ namespace ArView
 						Model::Position position = pSelectedPiece->getPosition();
 						glm::mat4 model(1.0f);
 						model = glm::translate(model, glm::vec3(position.file, position.rank, chessboardHeight + 0.001f));
+						model = glm::translate(model, translationVector);
 
 						GLint modelUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "Model");
 						glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
@@ -422,6 +428,7 @@ namespace ArView
 			{
 				glm::mat4 model(1.0f);
 				model = glm::translate(model, glm::vec3(positionColorPair.first.file, positionColorPair.first.rank, chessboardHeight));
+				model = glm::translate(model, translationVector);
 
 				GLint modelUniformLocation = glGetUniformLocation(m_pImpl->idShaderProgram, "Model");
 				glUniformMatrix4fv(modelUniformLocation, 1, GL_FALSE, &model[0][0]);
