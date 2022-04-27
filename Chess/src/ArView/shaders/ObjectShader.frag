@@ -9,11 +9,20 @@ out vec4 FragColor;
 
 uniform bool HasImage;
 uniform sampler2D TextureDiffuse;
+uniform sampler2D AlphaMask;
 
 uniform vec3 CameraWorldPosition;
 
 void main()
 {	
+	float x = gl_FragCoord.x / 1080.0;
+	float y = gl_FragCoord.y / 811.0;
+
+	if (texture(AlphaMask, vec2(x, y)).r == 1.0)
+	{
+		discard;
+	}
+	
 	vec4 color;
 	if (HasImage)
 	{

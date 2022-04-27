@@ -168,8 +168,6 @@ namespace ArView
 
 		cv::resize(image, image, m_pImpl->imageSize);
 
-		cv::Mat thresholdImage = m_pImpl->pThresholdFilter->apply(image);
-
 		m_pImpl->currentCharucoCorners.clear();
 		m_pImpl->currentCharucoIds.clear();
 
@@ -219,7 +217,7 @@ namespace ArView
 		if (m_pImpl->isCalibrated && m_pImpl->canSaveCalibrationImage())
 		{
 			cv::Vec3f rvec, tvec;
-			cv::aruco::estimatePoseCharucoBoard(
+			bool poseFound = cv::aruco::estimatePoseCharucoBoard(
 				m_pImpl->currentCharucoCorners,
 				m_pImpl->currentCharucoIds,
 				m_pImpl->charucoBoard,
@@ -228,76 +226,83 @@ namespace ArView
 				rvec,
 				tvec);
 
-			glm::mat4 extrinsic, extrinsicTranspose;
-			std::memcpy(glm::value_ptr(extrinsicTranspose), cv::Affine3(rvec, tvec).matrix.val, 16 * sizeof(float));
-
-			//This seems backwards, but it is not.
-			//The reason for this is that a GLM matrix is in column major order rather than row major
-			extrinsic = glm::transpose(extrinsicTranspose);
-
-			glm::mat3 inverseRotation = -glm::mat3(extrinsicTranspose);
-			glm::vec3 translation(extrinsic[3]);
-			glm::vec3 cameraPosition = inverseRotation * translation;
-
-			float f = m_pImpl->cameraMatrix.at<double>(0, 0);
-			float cx = m_pImpl->cameraMatrix.at<double>(0, 2);
-			float cy = m_pImpl->cameraMatrix.at<double>(1, 2);
-			float width = m_pImpl->imageSize.width;
-			float height = m_pImpl->imageSize.height;
-
-			//From https://amytabb.com/tips/tutorials/2019/06/28/OpenCV-to-OpenGL-tutorial-essentials/
-			glm::mat4 intrinsic;
-			intrinsic[0][0] = -f;
-			intrinsic[0][1] = 0.0;
-			intrinsic[0][2] = 0.0;
-			intrinsic[0][3] = 0.0;
-
-			intrinsic[1][0] = 0.0;
-			intrinsic[1][1] = -f;
-			intrinsic[1][2] = 0.0;
-			intrinsic[1][3] = 0.0;
-
-			intrinsic[2][0] = (width - cx);
-			intrinsic[2][1] = (height - cy);
-			intrinsic[2][2] = -(Z_NEAR + Z_FAR);
-			intrinsic[2][3] = 1.0;
-
-			intrinsic[3][0] = 0.0;
-			intrinsic[3][1] = 0.0;
-			intrinsic[3][2] = Z_NEAR * Z_FAR;
-			intrinsic[3][3] = 0.0;
-
-			//Draw AR objects into the scene. This will draw xyz axes and a teapot.
-			m_pImpl->objectDrawer.draw(image.data, intrinsic * extrinsic, cameraPosition);
-
-			std::vector<std::vector<cv::Point>> contours;
-			std::vector<cv::Vec4i> hierarchy;
-			cv::findContours(thresholdImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-
-			std::sort(
-				contours.begin(),
-				contours.end(),
-				[](std::vector<cv::Point> const& a, std::vector<cv::Point> const& b)
-				{
-					return cv::contourArea(a) > cv::contourArea(b);
-				});
-
-			for (size_t i = 0; i < std::min(size_t(1), contours.size()); ++i)
+			if (poseFound)
 			{
-				cv::Moments m = cv::moments(contours[i]);
-				if (m.m00 < 300)
+				glm::mat4 extrinsic, extrinsicTranspose;
+				std::memcpy(glm::value_ptr(extrinsicTranspose), cv::Affine3(rvec, tvec).matrix.val, 16 * sizeof(float));
+
+				//This seems backwards, but it is not.
+				//The reason for this is that a GLM matrix is in column major order rather than row major
+				extrinsic = glm::transpose(extrinsicTranspose);
+
+				glm::mat3 inverseRotation = -glm::mat3(extrinsicTranspose);
+				glm::vec3 translation(extrinsic[3]);
+				glm::vec3 cameraPosition = inverseRotation * translation;
+
+				float f = m_pImpl->cameraMatrix.at<double>(0, 0);
+				float cx = m_pImpl->cameraMatrix.at<double>(0, 2);
+				float cy = m_pImpl->cameraMatrix.at<double>(1, 2);
+				float width = m_pImpl->imageSize.width;
+				float height = m_pImpl->imageSize.height;
+
+				//From https://amytabb.com/tips/tutorials/2019/06/28/OpenCV-to-OpenGL-tutorial-essentials/
+				glm::mat4 intrinsic;
+				intrinsic[0][0] = -f;
+				intrinsic[0][1] = 0.0;
+				intrinsic[0][2] = 0.0;
+				intrinsic[0][3] = 0.0;
+
+				intrinsic[1][0] = 0.0;
+				intrinsic[1][1] = -f;
+				intrinsic[1][2] = 0.0;
+				intrinsic[1][3] = 0.0;
+
+				intrinsic[2][0] = (width - cx);
+				intrinsic[2][1] = (height - cy);
+				intrinsic[2][2] = -(Z_NEAR + Z_FAR);
+				intrinsic[2][3] = 1.0;
+
+				intrinsic[3][0] = 0.0;
+				intrinsic[3][1] = 0.0;
+				intrinsic[3][2] = Z_NEAR * Z_FAR;
+				intrinsic[3][3] = 0.0;
+
+				cv::Mat thresholdImage = m_pImpl->pThresholdFilter->apply(image);
+
+				int const count = 5;
+				cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+				cv::erode(thresholdImage, thresholdImage, structuringElement, cv::Point(-1, -1), count);
+
+				//Draw AR objects into the scene. This will draw the chessboard and pieces
+				m_pImpl->objectDrawer.draw(image.data, thresholdImage.data, intrinsic * extrinsic, cameraPosition);
+
+				std::vector<std::vector<cv::Point>> contours;
+				std::vector<cv::Vec4i> hierarchy;
+				cv::findContours(thresholdImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+
+				std::sort(
+					contours.begin(),
+					contours.end(),
+					[](std::vector<cv::Point> const& a, std::vector<cv::Point> const& b)
+					{
+						return cv::contourArea(a) > cv::contourArea(b);
+					});
+
+				for (size_t i = 0; i < std::min(size_t(1), contours.size()); ++i)
 				{
-					continue;
-				}
-				cv::Point centroid(m.m10 / m.m00, m.m01 / m.m00);
-				drawContours(image, contours, (int)i, cv::Scalar(0, 0, 255), 2, cv::LINE_8, hierarchy, 0);
-				cv::circle(image, centroid, 2, cv::Scalar(0, 255, 0), 5);
+					cv::Moments m = cv::moments(contours[i]);
+					if (m.m00 < 300)
+					{
+						continue;
+					}
+					cv::Point centroid(m.m10 / m.m00, m.m01 / m.m00);
+					cv::circle(image, centroid, 2, cv::Scalar(0, 255, 0), 5);
 
 
-				auto iter = std::max_element(
-					contours[i].begin(),
-					contours[i].end(),
-					[&centroid, &imageSize = m_pImpl->imageSize](cv::Point const& a, cv::Point const& b)
+					auto iter = std::max_element(
+						contours[i].begin(),
+						contours[i].end(),
+						[&centroid, &imageSize = m_pImpl->imageSize](cv::Point const& a, cv::Point const& b)
 					{
 						if (a.x == 0 || a.y == 0 || a.x == imageSize.width || a.y == imageSize.height)
 						{
@@ -306,25 +311,24 @@ namespace ArView
 						return cv::norm(a - centroid) < cv::norm(b - centroid);
 					});
 
-				cv::circle(image, *iter, 2, cv::Scalar(255, 0, 0), 5);
+					cv::circle(image, *iter, 2, cv::Scalar(255, 0, 0), 5);
 
-				std::optional<Model::Position> oPosition = m_pImpl->objectDrawer.handleClick((float)iter->x / m_pImpl->imageSize.width, (float)iter->y / m_pImpl->imageSize.height);
+					std::optional<Model::Position> oPosition = m_pImpl->objectDrawer.handleClick((float)iter->x / m_pImpl->imageSize.width, (float)iter->y / m_pImpl->imageSize.height);
 
-				m_pImpl->updatePointerPosition(oPosition);
+					m_pImpl->updatePointerPosition(oPosition);
 
-				if (m_pImpl->pointerPositionCounter >= 30)
-				{
-					if (m_pImpl->oPointerPosition)
+					if (m_pImpl->pointerPositionCounter >= 30)
 					{
-						m_pImpl->controller.selectPosition(*m_pImpl->oPointerPosition);
-					}
-					else
-					{
-						m_pImpl->controller.unselectPosition();
+						if (m_pImpl->oPointerPosition)
+						{
+							m_pImpl->controller.selectPosition(*m_pImpl->oPointerPosition);
+						}
+						else
+						{
+							m_pImpl->controller.unselectPosition();
+						}
 					}
 				}
-
-
 			}
 		}
 

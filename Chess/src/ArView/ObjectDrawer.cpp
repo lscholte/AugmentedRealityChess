@@ -284,7 +284,7 @@ namespace ArView
 
 	ObjectDrawer::~ObjectDrawer() = default;
 
-	void ObjectDrawer::draw(unsigned char* imageData, glm::mat4 const& view, glm::vec3 const& cameraPosition)
+	void ObjectDrawer::draw(unsigned char* imageData, unsigned char* depthData, glm::mat4 const& view, glm::vec3 const& cameraPosition)
 	{
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_DEPTH_TEST);
@@ -320,6 +320,17 @@ namespace ArView
 		{
 			glUseProgram(m_pImpl->objectShaderProgram);
 
+			GLuint texture;
+			glActiveTexture(GL_TEXTURE15);
+			glGenTextures(1, &texture);
+			glBindTexture(GL_TEXTURE_2D, texture);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, m_pImpl->width, m_pImpl->height, 0, GL_RED, GL_UNSIGNED_BYTE, depthData);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+			glUniform1i(glGetUniformLocation(m_pImpl->objectShaderProgram, "AlphaMask"), 15);
+
 			GLint viewUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "View");
 			glUniformMatrix4fv(viewUniformLocation, 1, GL_FALSE, &view[0][0]);
 
@@ -345,8 +356,6 @@ namespace ArView
 
 			//Render chess pieces
 			{
-
-
 				for (auto const& pChessPiece : m_pImpl->controller.getGame().getBoard().getPieces())
 				{
 					Model::Position position = pChessPiece->getPosition();
