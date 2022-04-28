@@ -33,8 +33,9 @@ public:
 	/// applies visual effects to the image.
 	/// </summary>
 	/// <param name="showCalibrationInfo">Whether or not to show chessboard calibration info</param>
+	/// <param name="enableHandThresholding">Whether or not to enable detection of hands</param>
 	/// <returns>A bitmap source representing the image</returns>
-	System::Windows::Media::Imaging::BitmapSource^ GetImage(bool showCalibrationInfo);
+	System::Windows::Media::Imaging::BitmapSource^ GetImage(bool showCalibrationInfo, bool enableHandThresholding);
 
 	/// <summary>
 	/// Determines if the camera currently has a suitable calibration

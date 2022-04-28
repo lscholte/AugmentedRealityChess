@@ -28,7 +28,7 @@ namespace Gui
                 {
                     Application.Current?.Dispatcher.Invoke(() =>
                     {
-                        Image = m_camera.GetImage(ShowCalibrationInfo);
+                        Image = m_camera.GetImage(ShowCalibrationInfo, EnableHandThresholding);
                         CanSaveCalibrationImage = m_camera.CanSaveCalibrationImage();
                         CanCalibrateCamera = m_camera.CanCalibrateCamera();
                     });
@@ -155,6 +155,8 @@ namespace Gui
 
 
         public bool ShowCalibrationInfo { get; set; } = true;
+
+        public bool EnableHandThresholding { get; set; } = true;
 
         private bool m_isCalibrated = false;
         public bool IsCalibrated

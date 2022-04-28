@@ -159,7 +159,7 @@ namespace ArView
 		return m_pImpl->imageSize.height;
 	}
 
-	std::vector<unsigned char> Camera::getImage(bool showCalibrationInfo)
+	std::vector<unsigned char> Camera::getImage(bool showCalibrationInfo, bool enableHandThresholding)
 	{
 		std::scoped_lock lock(m_pImpl->mutex);
 
@@ -267,65 +267,75 @@ namespace ArView
 				intrinsic[3][2] = Z_NEAR * Z_FAR;
 				intrinsic[3][3] = 0.0;
 
-				cv::Mat thresholdImage = m_pImpl->pThresholdFilter->apply(image);
-
-				int const count = 5;
-				cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
-				cv::erode(thresholdImage, thresholdImage, structuringElement, cv::Point(-1, -1), count);
+				cv::Mat thresholdImage;
+				if (enableHandThresholding)
+				{
+					thresholdImage = m_pImpl->pThresholdFilter->apply(image);
+					int const count = 5;
+					cv::Mat structuringElement = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 3));
+					cv::erode(thresholdImage, thresholdImage, structuringElement, cv::Point(-1, -1), count);
+				}
+				else
+				{
+					thresholdImage = cv::Scalar(255);
+				}
 
 				//Draw AR objects into the scene. This will draw the chessboard and pieces
 				m_pImpl->objectDrawer.draw(image.data, thresholdImage.data, intrinsic * extrinsic, cameraPosition);
 
-				std::vector<std::vector<cv::Point>> contours;
-				std::vector<cv::Vec4i> hierarchy;
-				cv::findContours(thresholdImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-
-				std::sort(
-					contours.begin(),
-					contours.end(),
-					[](std::vector<cv::Point> const& a, std::vector<cv::Point> const& b)
-					{
-						return cv::contourArea(a) > cv::contourArea(b);
-					});
-
-				for (size_t i = 0; i < std::min(size_t(1), contours.size()); ++i)
+				if (enableHandThresholding)
 				{
-					cv::Moments m = cv::moments(contours[i]);
-					if (m.m00 < 300)
-					{
-						continue;
-					}
-					cv::Point centroid(m.m10 / m.m00, m.m01 / m.m00);
-					cv::circle(image, centroid, 2, cv::Scalar(0, 255, 0), 5);
+					std::vector<std::vector<cv::Point>> contours;
+					std::vector<cv::Vec4i> hierarchy;
+					cv::findContours(thresholdImage, contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-
-					auto iter = std::max_element(
-						contours[i].begin(),
-						contours[i].end(),
-						[&centroid, &imageSize = m_pImpl->imageSize](cv::Point const& a, cv::Point const& b)
-					{
-						if (a.x == 0 || a.y == 0 || a.x == imageSize.width || a.y == imageSize.height)
+					std::sort(
+						contours.begin(),
+						contours.end(),
+						[](std::vector<cv::Point> const& a, std::vector<cv::Point> const& b)
 						{
-							return false;
+							return cv::contourArea(a) > cv::contourArea(b);
+						});
+
+					for (size_t i = 0; i < std::min(size_t(1), contours.size()); ++i)
+					{
+						cv::Moments m = cv::moments(contours[i]);
+						if (m.m00 < 300)
+						{
+							continue;
 						}
-						return cv::norm(a - centroid) < cv::norm(b - centroid);
-					});
+						cv::Point centroid(m.m10 / m.m00, m.m01 / m.m00);
+						cv::circle(image, centroid, 2, cv::Scalar(0, 255, 0), 5);
 
-					cv::circle(image, *iter, 2, cv::Scalar(255, 0, 0), 5);
 
-					std::optional<Model::Position> oPosition = m_pImpl->objectDrawer.handleClick((float)iter->x / m_pImpl->imageSize.width, (float)iter->y / m_pImpl->imageSize.height);
-
-					m_pImpl->updatePointerPosition(oPosition);
-
-					if (m_pImpl->pointerPositionCounter >= 30)
-					{
-						if (m_pImpl->oPointerPosition)
+						auto iter = std::max_element(
+							contours[i].begin(),
+							contours[i].end(),
+							[&centroid, &imageSize = m_pImpl->imageSize](cv::Point const& a, cv::Point const& b)
 						{
-							m_pImpl->controller.selectPosition(*m_pImpl->oPointerPosition);
-						}
-						else
+							if (a.x == 0 || a.y == 0 || a.x == imageSize.width || a.y == imageSize.height)
+							{
+								return false;
+							}
+							return cv::norm(a - centroid) < cv::norm(b - centroid);
+						});
+
+						cv::circle(image, *iter, 2, cv::Scalar(255, 0, 0), 5);
+
+						std::optional<Model::Position> oPosition = m_pImpl->objectDrawer.handleClick((float)iter->x / m_pImpl->imageSize.width, (float)iter->y / m_pImpl->imageSize.height);
+
+						m_pImpl->updatePointerPosition(oPosition);
+
+						if (m_pImpl->pointerPositionCounter >= 30)
 						{
-							m_pImpl->controller.unselectPosition();
+							if (m_pImpl->oPointerPosition)
+							{
+								m_pImpl->controller.selectPosition(*m_pImpl->oPointerPosition);
+							}
+							else
+							{
+								m_pImpl->controller.unselectPosition();
+							}
 						}
 					}
 				}

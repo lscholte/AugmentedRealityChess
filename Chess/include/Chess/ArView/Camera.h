@@ -47,8 +47,9 @@ namespace ArView
 		/// applies visual effects to the image.
 		/// </summary>
 		/// <param name="showCalibrationInfo">Whether or not to show chessboard calibration info</param>
+		/// <param name="enableHandThresholding">Whether or not to enable detection of hands</param>
 		/// <returns>A vector of binary image data in BGR format</returns>
-		std::vector<unsigned char> getImage(bool showCalibrationInfo);
+		std::vector<unsigned char> getImage(bool showCalibrationInfo, bool enableHandThresholding);
 
 		/// <summary>
 		/// Determines if the camera currently has a suitable calibration

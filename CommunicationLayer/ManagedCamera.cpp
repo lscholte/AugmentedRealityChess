@@ -23,10 +23,10 @@ ManagedCamera::~ManagedCamera()
 	delete m_pCamera;
 }
 
-System::Windows::Media::Imaging::BitmapSource^ ManagedCamera::GetImage(bool showCalibrationInfo)
+System::Windows::Media::Imaging::BitmapSource^ ManagedCamera::GetImage(bool showCalibrationInfo, bool enableHandThresholding)
 {
 	//Copy the image data into a managed array which can be garbage collected
-	std::vector<unsigned char> data = m_pCamera->getImage(showCalibrationInfo);
+	std::vector<unsigned char> data = m_pCamera->getImage(showCalibrationInfo, enableHandThresholding);
 	auto managedData = gcnew array<byte>(data.size());
 	pin_ptr<byte> managedDataStart = &managedData[0];
 	std::memcpy(managedDataStart, data.data(), data.size());
