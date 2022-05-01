@@ -2,8 +2,7 @@
 
 A simple AR application using WPF, OpenCV, and OpenGL
 
-![image](https://user-images.githubusercontent.com/6503344/158944092-62ac313e-38f6-4a3e-9c48-6ec5c3a8ab6d.png)
-![image](https://user-images.githubusercontent.com/6503344/158944123-91f2aaec-9d7f-40b6-a37e-98cad894ce5f.png)
+![image](https://user-images.githubusercontent.com/6503344/165653318-ba68bed1-8688-4b75-a0bf-2b6d77be0e52.png)
 
 ## Compilation
 
