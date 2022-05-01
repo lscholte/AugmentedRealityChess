@@ -423,7 +423,8 @@ namespace ArView
 		//Render into ID image
 		{
 			glBindFramebuffer(GL_FRAMEBUFFER, m_pImpl->idFramebuffer);
-			glClear(GL_COLOR);
+			glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			glUseProgram(m_pImpl->idShaderProgram);
 
