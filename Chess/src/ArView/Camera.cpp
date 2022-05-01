@@ -313,17 +313,39 @@ namespace ArView
 							contours[i].end(),
 							[&centroid, &imageSize = m_pImpl->imageSize](cv::Point const& a, cv::Point const& b)
 						{
-							if (a.x == 0 || a.y == 0 || a.x == imageSize.width || a.y == imageSize.height)
-							{
-								return false;
-							}
-							return cv::norm(a - centroid) < cv::norm(b - centroid);
+							float aDistanceToEdge = std::min({
+								a.x,
+								a.y,
+								imageSize.width - a.x,
+								imageSize.height - a.y});
+							float aDistanceToCentroid = cv::norm(a - centroid);
+							float bDistanceToEdge = std::min({
+								b.x,
+								b.y,
+								imageSize.width - b.x,
+								imageSize.height - b.y});
+							float bDistanceToCentroid = cv::norm(b - centroid);
+
+							return 
+								aDistanceToEdge * aDistanceToCentroid * aDistanceToCentroid < 
+								bDistanceToEdge * bDistanceToCentroid * bDistanceToCentroid;
 						});
 
 						cv::circle(image, *iter, 2, cv::Scalar(255, 0, 0), 5);
+			
 
 						std::optional<Model::Position> oPosition = m_pImpl->objectDrawer.handleClick((float)iter->x / m_pImpl->imageSize.width, (float)iter->y / m_pImpl->imageSize.height);
-
+						if (oPosition)
+						{
+							std::string text = "(" + std::to_string(oPosition->rank) + "," + std::to_string(oPosition->file) + ")";
+							cv::putText(
+								image,
+								text,
+								*iter,
+								cv::FONT_HERSHEY_COMPLEX_SMALL,
+								1.0,
+								cv::Scalar(255, 0, 0));
+						}
 						m_pImpl->updatePointerPosition(oPosition);
 
 						if (m_pImpl->pointerPositionCounter >= 30)
