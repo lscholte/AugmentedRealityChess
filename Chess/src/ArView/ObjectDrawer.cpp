@@ -70,7 +70,7 @@ namespace ArView
 		std::shared_ptr<DrawableObject> pDrawableChessboard;
 		GLuint chessboardTexture;
 
-		Controller::Controller controller;
+		std::shared_ptr<Controller::Controller> pController;
 
 		//TODO: Replace with maps or a bidirectional map
 		std::vector<std::pair<glm::u8vec3, Model::Position>> colorPositionMap;
@@ -80,10 +80,10 @@ namespace ArView
 
 		ObjectLoader objectLoader;
 
-		Impl(size_t width, size_t height, Controller::Controller const& controller)
+		Impl(size_t width, size_t height, std::shared_ptr<Controller::Controller> pController)
 			: width(width)
 			, height(height)
-			, controller(controller)
+			, pController(pController)
 		{
 			glfwInit();
 			glfwWindowHint(GLFW_SAMPLES, 4); //Enable anti-aliasing
@@ -158,9 +158,9 @@ namespace ArView
 
 			pDrawableChessboard = ObjectLoader().load("./assets/chessboard/chessboard.obj");
 
-			for (unsigned char rank = 1; rank <= controller.getGame().getBoard().getSize().ranks; ++rank)
+			for (unsigned char rank = 1; rank <= pController->getGame().getBoard().getSize().ranks; ++rank)
 			{
-				for (unsigned char file = 1; file <= controller.getGame().getBoard().getSize().files; ++file)
+				for (unsigned char file = 1; file <= pController->getGame().getBoard().getSize().files; ++file)
 				{
 					glm::u8vec3 color(32 * rank - 1, 0, 32 * file - 1);
 					colorPositionMap.push_back(std::make_pair(color, Model::Position(rank, file)));
@@ -277,8 +277,8 @@ namespace ArView
 		}
 	};
 
-	ObjectDrawer::ObjectDrawer(size_t width, size_t height, Controller::Controller const& controller)
-		: m_pImpl(std::make_shared<Impl>(width, height, controller))
+	ObjectDrawer::ObjectDrawer(size_t width, size_t height, std::shared_ptr<Controller::Controller> pController)
+		: m_pImpl(std::make_unique<Impl>(width, height, pController))
 	{
 	}
 
@@ -356,7 +356,7 @@ namespace ArView
 
 			//Render chess pieces
 			{
-				for (auto const& pChessPiece : m_pImpl->controller.getGame().getBoard().getPieces())
+				for (auto const& pChessPiece : m_pImpl->pController->getGame().getBoard().getPieces())
 				{
 					Model::Position position = pChessPiece->getPosition();
 
@@ -388,10 +388,10 @@ namespace ArView
 				GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
 				glUniform1i(hasImageUniformLocation, false);
 
-				std::shared_ptr<Model::Piece> pSelectedPiece = m_pImpl->controller.getSelectedPiece();
+				std::shared_ptr<Model::Piece> pSelectedPiece = m_pImpl->pController->getSelectedPiece();
 				if (pSelectedPiece)
 				{
-					std::vector<Model::Position> legalMoves = pSelectedPiece->getLegalMoves(m_pImpl->controller.getGame().getBoard());
+					std::vector<Model::Position> legalMoves = pSelectedPiece->getLegalMoves(m_pImpl->pController->getGame().getBoard());
 					for (auto const& position : legalMoves)
 					{
 						glm::mat4 model(1.0f);

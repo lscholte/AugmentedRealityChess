@@ -6,8 +6,6 @@
 #include <Chess/ArView/Camera.h>
 #include <Chess/ArView/ObjectDrawer.h>
 #include <Chess/ArView/Constants.h>
-#include <Chess/ArView/Region.h>
-#include <Chess/ArView/RegionSegmenter.h>
 #include <Chess/ArView/Filters/Filter.h>
 #include <Chess/ArView/Filters/BlurFilter.h>
 #include <Chess/ArView/Filters/ThresholdFilter.h>
@@ -77,7 +75,7 @@ namespace ArView
 		bool isCalibrated;
 		double reprojectionError;
 
-		Controller::Controller controller;
+		std::shared_ptr<Controller::Controller> pController;
 
 		ObjectDrawer objectDrawer;
 
@@ -92,7 +90,8 @@ namespace ArView
 		Impl()
 			: videoCapture("http://10.0.0.105/video.mjpg")
 			, imageSize(videoCapture.get(cv::CAP_PROP_FRAME_WIDTH), videoCapture.get(cv::CAP_PROP_FRAME_HEIGHT))
-			, objectDrawer(imageSize.width, imageSize.height, controller)
+			, pController(std::make_shared<Controller::Controller>())
+			, objectDrawer(imageSize.width, imageSize.height, pController)
 			, pointerPositionCounter(0)
 		{
 			resetCalibration();
@@ -143,7 +142,7 @@ namespace ArView
 	};
 
 	Camera::Camera()
-		: m_pImpl(std::make_shared<Impl>())
+		: m_pImpl(std::make_unique<Impl>())
 	{
 	}
 
@@ -352,11 +351,11 @@ namespace ArView
 						{
 							if (m_pImpl->oPointerPosition)
 							{
-								m_pImpl->controller.selectPosition(*m_pImpl->oPointerPosition);
+								m_pImpl->pController->selectPosition(*m_pImpl->oPointerPosition);
 							}
 							else
 							{
-								m_pImpl->controller.unselectPosition();
+								m_pImpl->pController->unselectPosition();
 							}
 						}
 					}
@@ -606,14 +605,14 @@ namespace ArView
 
 		if (oPosition)
 		{
-			m_pImpl->controller.selectPosition(*oPosition);
+			m_pImpl->pController->selectPosition(*oPosition);
 		}
 	}
 
 	void Camera::handleRightClick()
 	{
 		std::scoped_lock lock(m_pImpl->mutex);
-		m_pImpl->controller.unselectPosition();
+		m_pImpl->pController->unselectPosition();
 	}
 }
 }

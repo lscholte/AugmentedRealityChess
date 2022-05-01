@@ -112,11 +112,11 @@ namespace Model
 	};
 
 	Board::Board()
-		: m_pImpl(std::make_shared<Impl>())
+		: m_pImpl(std::make_unique<Impl>())
 	{}
 
 	Board::Board(Board const& otherBoard)
-		: m_pImpl(std::make_shared<Impl>(*otherBoard.m_pImpl))
+		: m_pImpl(std::make_unique<Impl>(*otherBoard.m_pImpl))
 	{
 	}
 

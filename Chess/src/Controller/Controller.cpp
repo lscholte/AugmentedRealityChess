@@ -21,7 +21,7 @@ namespace Controller
 	};
 
 	Controller::Controller()
-		: m_pImpl(std::make_shared<Impl>())
+		: m_pImpl(std::make_unique<Impl>())
 	{}
 
 	Controller::~Controller() = default;

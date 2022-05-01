@@ -34,7 +34,7 @@ namespace Model
 	};
 
 	Piece::Piece(bool isWhite, Position position)
-		: m_pImpl(std::make_shared<Impl>(isWhite, position))
+		: m_pImpl(std::make_unique<Impl>(isWhite, position))
 	{}
 
 	Piece::Piece(Piece const& otherPiece)

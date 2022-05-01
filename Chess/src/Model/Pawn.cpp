@@ -27,12 +27,12 @@ namespace Model
 
 	Pawn::Pawn(bool isWhite, Position position)
 		: Piece(isWhite, position)
-		, m_pImpl(std::make_shared<Impl>())
+		, m_pImpl(std::make_unique<Impl>())
 	{}
 
 	Pawn::Pawn(Pawn const& otherPawn)
 		: Piece(otherPawn)
-		, m_pImpl(std::make_shared<Impl>(*otherPawn.m_pImpl))
+		, m_pImpl(std::make_unique<Impl>(*otherPawn.m_pImpl))
 	{}
 
 	Pawn::~Pawn() = default;

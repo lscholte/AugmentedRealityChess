@@ -33,7 +33,8 @@ namespace ArView
 		/// </summary>
 		/// <param name="width">The width of images that will be drawn on top of</param>
 		/// <param name="height">The height of images that will be drawn on top of</param>
-		ObjectDrawer(size_t width, size_t height, Controller::Controller const& controller);
+		/// <param name="pController">A pointer to the controller object for the chess game</param>
+		ObjectDrawer(size_t width, size_t height, std::shared_ptr<Controller::Controller> pController);
 		virtual ~ObjectDrawer();
 
 		/// <summary>
@@ -48,7 +49,7 @@ namespace ArView
 
 	private:
 		struct Impl;
-		std::shared_ptr<Impl> m_pImpl;
+		std::unique_ptr<Impl> m_pImpl;
 
 	};
 }
