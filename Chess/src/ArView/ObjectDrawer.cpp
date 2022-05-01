@@ -388,7 +388,7 @@ namespace ArView
 				GLint hasImageUniformLocation = glGetUniformLocation(m_pImpl->objectShaderProgram, "HasImage");
 				glUniform1i(hasImageUniformLocation, false);
 
-				std::shared_ptr<Model::Piece> pSelectedPiece = m_pImpl->pController->getSelectedPiece();
+				std::shared_ptr<Model::Piece const> pSelectedPiece = m_pImpl->pController->getSelectedPiece();
 				if (pSelectedPiece)
 				{
 					std::vector<Model::Position> legalMoves = pSelectedPiece->getLegalMoves(m_pImpl->pController->getGame().getBoard());

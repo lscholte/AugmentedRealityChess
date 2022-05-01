@@ -39,7 +39,7 @@ namespace Controller
 		/// The piece at the selected position or an empty pointer
 		/// if no piece exists at that position or there is no selected position
 		/// </returns>
-		std::shared_ptr<Model::Piece> getSelectedPiece() const;
+		std::shared_ptr<Model::Piece const> getSelectedPiece() const;
 
 		/// <summary>
 		/// Selects the specified position. This may result in a piece

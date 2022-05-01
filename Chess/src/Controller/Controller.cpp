@@ -31,7 +31,7 @@ namespace Controller
 		return m_pImpl->game;
 	}
 
-	std::shared_ptr<Model::Piece> Controller::getSelectedPiece() const
+	std::shared_ptr<Model::Piece const> Controller::getSelectedPiece() const
 	{
 		return m_pImpl->pSelectedPiece;
 	}
