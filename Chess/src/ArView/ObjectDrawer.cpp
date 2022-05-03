@@ -8,7 +8,6 @@
 #include <Chess/ArView/Vertex.h>
 #include <Chess/ArView/VertexBuilder.h>
 #include <Chess/ArView/DrawableObject.h>
-#include <Chess/ArView/LineSegments.h>
 #include <Chess/ArView/Quad.h>
 #include <Chess/ArView/Constants.h>
 

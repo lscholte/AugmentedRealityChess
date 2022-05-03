@@ -47,10 +47,6 @@
       <SubType>
       </SubType>
     </ClInclude>
-    <ClInclude Include="..\..\include\Chess\ArView\LineSegments.h">
-      <SubType>
-      </SubType>
-    </ClInclude>
     <ClInclude Include="..\..\include\Chess\ArView\Quad.h">
       <SubType>
       </SubType>
@@ -97,10 +93,6 @@
       </SubType>
     </ClCompile>
     <ClCompile Include="Filters\ThresholdFilter.cpp">
-      <SubType>
-      </SubType>
-    </ClCompile>
-    <ClCompile Include="LineSegments.cpp">
       <SubType>
       </SubType>
     </ClCompile>

@@ -45,6 +45,15 @@ namespace ArView
 		/// <param name="view">Transformation matrix corresponding to the camera's intrinsic and extrinsic parameters</param>
 		void draw(unsigned char* imageData, unsigned char* depthData, glm::mat4 const& view, glm::vec3 const& cameraPosition);
 
+		/// <summary>
+		/// Determines the chessboard square corresponding to a normalized position in the range of [0,1].
+		/// </summary>
+		/// <param name="x">The normalized x coordinate</param>
+		/// <param name="y">The normalized y coordinate</param>
+		/// <returns>
+		/// A chessboard position corresponding to the image coordinate,
+		/// or empty optional if no such position exists
+		/// </returns>
 		std::optional<Model::Position> handleClick(float x, float y);
 
 	private:

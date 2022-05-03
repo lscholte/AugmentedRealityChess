@@ -113,8 +113,16 @@ namespace ArView
 		/// <returns>The reprojection error if the camera is calibrated, NaN otherwise</returns>
 		double getReprojectionError() const;
 
+		/// <summary>
+		/// Handles a left click at normalized coordinates in the range of [0,1].
+		/// </summary>
+		/// <param name="x">The normalized x coordinate</param>
+		/// <param name="y">The normalized y coordinate</param>
 		void handleLeftClick(float x, float y);
 
+		/// <summary>
+		/// Hands a right click.
+		/// </summary>
 		void handleRightClick();
 
 	private:

@@ -10,6 +10,9 @@ namespace Chess
 {
 namespace Model
 {
+	/// <summary>
+	/// Represents a position on a chessboard.
+	/// </summary>
 	struct EXPORT Position
 	{
 		unsigned char rank;

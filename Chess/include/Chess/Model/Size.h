@@ -10,6 +10,9 @@ namespace Chess
 {
 namespace Model
 {
+	/// <summary>
+	/// Represents the dimensions of a chessboard.
+	/// </summary>
 	struct EXPORT Size
 	{
 	public:
